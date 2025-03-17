@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif, sans-serif;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+}
+
+.left-side {
+    flex: 0.9;
+    background: url('/Assets/LoginScreen.png') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #f8f8f8;
+}
+
+.login-box {
+    width: 500px;  
+    height: 700px; 
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    text-align: center;
+}
+
+.login-box h2 {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.login-box p {
+    color: grey;
+    margin-bottom: 30px;
+}
+
+.login-box label {
+    display: block;
+    text-align: left;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.forgot-password {
+    text-align: right;
+    font-size: 12px;
+    margin-bottom: 40px;
+}
+
+.forgot-password a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 10px;
+    background: #3498db;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.login-box button:hover {
+    background: #2980b9;
+}
+
+.login-box .or {
+    margin: 10px 0;
+}
+
+.google-login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.google-login {
+    background: url('/Assets/Googlelogo.png') no-repeat center center/contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.signup {
+    margin-top: 20px;
+    color: grey;
+}
+
+.signup a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
