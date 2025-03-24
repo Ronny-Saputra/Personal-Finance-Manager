@@ -24,7 +24,7 @@ Personal Finance Manager adalah sistem berbasis web yang memungkinkan pengguna m
 | Ronny  | Project Manager & Tester          |
 | Darren | Frontend Developer (Design)       |
 | Karina | Frontend Developer (HTML/CSS/JS)    |
-| Jo     | Backend Developer (Database)      |
+| Joy    | Backend Developer (Database)      |
 | Devon  | Backend Developer (Coding)        |
 | Owen   | Backend Developer (Coding)        |
 
