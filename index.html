@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to My App</title>
+  <style>
+    /* Styling untuk full screen image */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .fullscreen-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('LoginScreen.png'); /* Gambar background */
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+    }
+
+    /* Efek bling-bling (animasi cahaya) */
+    .bling-effect {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px; /* Ukuran lingkaran kilauan */
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+      border-radius: 50%;
+      animation: bling 3s infinite ease-in-out;
+      z-index: 2;
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.8); /* Tambahkan glow effect */
+    }
+
+    @keyframes bling {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2); /* Lingkaran membesar */
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2); /* Lingkaran menghilang */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fullscreen Image -->
+  <div class="fullscreen-image"></div>
+
+  <!-- Bling Effect -->
+  <div class="bling-effect"></div>
+
+  <!-- Firebase Config -->
+  <script src="firebase.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+      authDomain: "nextgrowthgroup.firebaseapp.com",
+      databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
+      projectId: "nextgrowthgroup",
+      storageBucket: "nextgrowthgroup.firebasestorage.app",
+      messagingSenderId: "658734405364",
+      appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+      measurementId: "G-Y5DB2XL0TH"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase(app);
+    const welcomeRef = ref(database, 'welcomeMessage');
+
+    set(welcomeRef, { message: "Welcome to My App!" });
+
+    onValue(welcomeRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log("Realtime Data:", data);
+    });
+
+    // Redirect ke halaman login.html setelah 5 detik
+    setTimeout(function() {
+      window.location.href = "login.html";
+    }, 5000);
+  </script>
+</body>
+</html>
