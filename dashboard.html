@@ -1,303 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Finance Manager - Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Times New Roman', Times, serif;
-        }
-
-        body {
-            display: flex;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            width: 250px;
-            background: url('Background.png') no-repeat center center/cover;
-            color: black;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            position: fixed;
-        }
-
-        .welcome-message {
-            font-size: 25px;
-            margin-bottom: 40px;
-            margin-top: 200px;
-            font-weight: bold;
-        }
-
-        .sidebar-menu {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            color: black;
-            text-decoration: none;
-            font-size: 20px;
-            border-left: 4px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            border-left: 4px solid rgba(0, 0, 0, 0.2);
-        }
-
-        .menu-item.active {
-            background-color: rgba(0, 0, 0, 0.1);
-            border-left: 4px solid black;
-        }
-
-        .menu-item img {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        /* Main Content Styles */
-        .main-content {
-            flex-grow: 1;
-            margin-left: 250px;
-            padding: 30px;
-        }
-
-        .welcome-header {
-            margin-bottom: 30px;
-        }
-
-        .welcome-header h2 {
-            font-size: 24px;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .welcome-header p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-
-        /* Graph Containers */
-        .graph-container {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .graph-placeholder {
-            font-size: 18px;
-            color: #666;
-        }
-
-        /* Data Tables */
-        .data-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .data-card {
-            background-color: white;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .data-card h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th, .data-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .data-table th {
-            font-weight: normal;
-            color: #666;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background-color: #f9f9f9;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personal Finance Manager - Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="welcome-message">Welcome, Darren</div>
-        
-        <div class="sidebar-menu">
-            <a href="dashboard.html" class="menu-item active">
-                <img src="Logos/dashboard_logo.png" alt="Dashboard">
-                <span>Dashboard</span>
-            </a>
-            
-            <a href="income.html" class="menu-item">
-                <img src="Logos/expenses_logo.png" alt="Expenses">
-                <span>Expenses and Income</span>
-            </a>
-            
-            <a href="transactions.html" class="menu-item">
-                <img src="Logos/dashboard_logo.png" alt="Dashboard">
-                <span>Transactions</span>
-            </a>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="welcome-message">Welcome, Darren</div>
 
-            <a href="#" class="menu-item">
-                <img src="Logos/transactions_logo.png" alt="Transactions">
-                <span>Transactions Records</span>
-            </a>
-            
-            <a href="#" class="menu-item">
-                <img src="Logos/reports_logo.png" alt="Reports">
-                <span>Monthly Reports</span>
-            </a>
-            
-            <a href="#" class="menu-item">
-                <img src="Logos/monthly_logo.png" alt="Savings">
-                <span>Monthly Savings Target</span>
-            </a>
-            
-            <a href="#" class="menu-item">
-                <img src="Logos/adding_logo.png" alt="Add">
-                <span>Add Income and Expenses</span>
-            </a>
-        </div>
-        
-        <div class="sidebar-footer">
-            <div class="menu-item" onclick="logout()">
-                <img src="Logos/logout_logo.png" alt="Logout">
-                <span>Logout</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="welcome-header">
-            <h2>Dashboard Overview</h2>
-       
-        </div>
-        
-        <div class="dashboard-grid">
-            <!-- Top Section - Graph Placeholders -->
-            <div class="graph-container">
-                <div class="graph-placeholder">Income Trend Graph (Coming Soon)</div>
-            </div>
-            
-            <div class="graph-container">
-                <div class="graph-placeholder">Expense Breakdown Graph (Coming Soon)</div>
-            </div>
-            
-            <!-- Bottom Section - Data Tables -->
-            <div class="data-section">
-                <div class="data-card">
-                    <h3>Income Summary</h3>
-                    <table class="data-table">
-                        <tr>
-                            <th>Month</th>
-                            <th>Amount</th>
-                        </tr>
-                        <tr>
-                            <td>January</td>
-                            <td>Rp. 5.500.000,00</td>
-                        </tr>
-                        <tr>
-                            <td>February</td>
-                            <td>Rp. 6.000.000,00</td>
-                        </tr>
-                        <tr>
-                            <td>March</td>
-                            <td>Rp. 5.600.000,00</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>Total</td>
-                            <td>Rp. 34,400,000,00</td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <div class="data-card">
-                    <h3>Expense Percentage</h3>
-                    <table class="data-table">
-                        <tr>
-                            <th>Category</th>
-                            <th>Percentage</th>
-                        </tr>
-                        <tr>
-                            <td>Food and Drink</td>
-                            <td>15%</td>
-                        </tr>
-                        <tr>
-                            <td>Entertainment</td>
-                            <td>12%</td>
-                        </tr>
-                        <tr>
-                            <td>Living Expenses</td>
-                            <td>20%</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>Total</td>
-                            <td>100%</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html" class="menu-item active">
+        <img src="Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+
+      <a href="income.html" class="menu-item">
+        <img src="Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+
+      <a href="transactions.html" class="menu-item">
+        <img src="Logos/transactions_logo.png" alt="Dashboard">
+        <span>Transactions</span>
+      </a>
+
+      <a href="#" class="menu-item">
+        <img src="Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+
+      <a href="#" class="menu-item">
+        <img src="Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+
+      <a href="#" class="menu-item">
+        <img src="Logos/adding_logo.png" alt="Add">
+        <span>Add Income and Expenses</span>
+      </a>
     </div>
 
-    <script>
-        // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'login.html';
-            }
-        }
-    </script>
+    <div class="sidebar-footer">
+      <div class="menu-item" id="logout-button">
+        <img src="Logos/logout_logo.png" alt="Logout">
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Dashboard Overview</h2>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Graph placeholders -->
+      <div class="graph-container">
+        <div class="graph-placeholder">Income Trend Graph (Coming Soon)</div>
+      </div>
+
+      <div class="graph-container">
+        <div class="graph-placeholder">Expense Breakdown Graph (Coming Soon)</div>
+      </div>
+
+      <!-- Data tables -->
+      <div class="data-section">
+        <div class="data-card">
+          <h3>Income Summary</h3>
+          <table class="data-table">
+            <tr><th>Month</th><th>Amount</th></tr>
+            <tr><td>January</td><td>Rp. 5.500.000,00</td></tr>
+            <tr><td>February</td><td>Rp. 6.000.000,00</td></tr>
+            <tr><td>March</td><td>Rp. 5.600.000,00</td></tr>
+            <tr class="total-row"><td>Total</td><td>Rp. 34,400,000,00</td></tr>
+          </table>
+        </div>
+
+        <div class="data-card">
+          <h3>Expense Percentage</h3>
+          <table class="data-table">
+            <tr><th>Category</th><th>Percentage</th></tr>
+            <tr><td>Food and Drink</td><td>15%</td></tr>
+            <tr><td>Entertainment</td><td>12%</td></tr>
+            <tr><td>Living Expenses</td><td>20%</td></tr>
+            <tr class="total-row"><td>Total</td><td>100%</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
 </body>
 </html>
