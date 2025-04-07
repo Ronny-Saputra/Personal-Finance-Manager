@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Finance Manager - Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="welcome-message">Welcome, <span id="user-name">Guest</span></div>
+
+    <div class="sidebar-menu">
+      <a href="dashboard.html" class="menu-item active">
+        <img src="gambar/dashboard_logo.png" alt="Dashboard" />
+        <span>Dashboard</span>
+      </a>
+
+      <a href="income.html" class="menu-item">
+        <img src="gambar/expenses_logo.png" alt="Expenses" />
+        <span>Expenses and Income</span>
+      </a>
+
+      <a href="transactions.html" class="menu-item">
+        <img src="gambar/transactions_logo.png" alt="Transactions" />
+        <span>Transactions</span>
+      </a>
+
+      <a href="#" class="menu-item">
+        <img src="gambar/reports_logo.png" alt="Reports" />
+        <span>Monthly Reports</span>
+      </a>
+
+      <a href="#" class="menu-item">
+        <img src="gambar/monthly_logo.png" alt="Savings" />
+        <span>Monthly Savings Target</span>
+      </a>
+
+      <a href="add.html" class="menu-item">
+        <img src="gambar/adding_logo.png" alt="Add" />
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="menu-item" id="logout-button">
+        <img src="gambar/logout_logo.png" alt="Logout" />
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Dashboard Overview</h2>
+      <p>Here's an overview of your financial data.</p>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Graph placeholders -->
+      <div class="graph-container">
+        <div class="graph-placeholder">Income Trend Graph (Coming Soon)</div>
+      </div>
+
+      <div class="graph-container">
+        <div class="graph-placeholder">Expense Breakdown Graph (Coming Soon)</div>
+      </div>
+
+      <!-- Data tables -->
+      <div class="data-section">
+        <div class="data-card">
+          <h3>Income Summary</h3>
+          <table class="data-table">
+            <tr><th>Month</th><th>Amount</th></tr>
+            <tr><td>January</td><td>Rp. 5.500.000,00</td></tr>
+            <tr><td>February</td><td>Rp. 6.000.000,00</td></tr>
+            <tr><td>March</td><td>Rp. 5.600.000,00</td></tr>
+            <tr class="total-row"><td>Total</td><td>Rp. 34,400,000,00</td></tr>
+          </table>
+        </div>
+
+        <div class="data-card">
+          <h3>Expense Percentage</h3>
+          <table class="data-table">
+            <tr><th>Category</th><th>Percentage</th></tr>
+            <tr><td>Food and Drink</td><td>15%</td></tr>
+            <tr><td>Entertainment</td><td>12%</td></tr>
+            <tr><td>Living Expenses</td><td>20%</td></tr>
+            <tr class="total-row"><td>Total</td><td>100%</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

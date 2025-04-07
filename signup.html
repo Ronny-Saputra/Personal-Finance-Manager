@@ -4,7 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left-side {
+            flex: 0.9;
+            background: url('gambar/LoginScreen.png') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .right-side {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #f8f8f8;
+        }
+
+        .signup-box {
+            width: 400px;  
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            text-align: center;
+        }
+
+        .signup-box h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .signup-box p {
+            color: grey;
+            margin-bottom: 20px;
+        }
+
+        .signup-box label {
+            display: block;
+            text-align: left;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .signup-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .signup-box button {
+            width: 100%;
+            padding: 10px;
+            background: #5343ea;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .signup-box button:hover {
+            background: #3b27ae;
+        }
+
+        .google-signup-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .google-signup {
+            cursor: pointer;
+            background: url('gambar/Googlelogo.png') no-repeat center center/contain;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .login {
+            margin-top: 20px;
+            color: grey;
+        }
+
+        .login a {
+            color: #0d1ad1;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -38,7 +144,79 @@
         </div>
     </div>
 
-    <script type="module" src="firebase-config.js"></script>
-    <script src="script.js"></script>
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+            authDomain: "nextgrowthgroup.firebaseapp.com",
+            databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
+            projectId: "nextgrowthgroup",
+            storageBucket: "nextgrowthgroup.firebasestorage.app",
+            messagingSenderId: "658734405364",
+            appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+            measurementId: "G-Y5DB2XL0TH"
+          };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Function: Sign Up with Email & Password
+        window.signUp = async () => {
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+
+            if (name === "" || email === "" || password === "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            try {
+                // Create user with email and password
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Update displayName (full name)
+                await updateProfile(user, {
+                    displayName: name
+                });
+
+                console.log("User registered:", user);
+                alert("Sign Up Successful! Welcome, " + name);
+
+                // Redirect to dashboard.html
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error during sign up:", error);
+                alert("Sign Up Failed: " + error.message);
+            }
+        };
+
+        // Function: Sign Up with Google
+        window.signUpWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("User signed up with Google:", result.user);
+                alert("Sign Up Successful! Welcome, " + result.user.displayName);
+
+                // Redirect to dashboard.html
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error signing up with Google:", error);
+                alert("Google Sign Up Failed: " + error.message);
+            }
+        };
+
+        // Redirect to Login Page
+        window.goToLogin = () => {
+            window.location.href = 'login.html';
+        };
+    </script>
 </body>
 </html>

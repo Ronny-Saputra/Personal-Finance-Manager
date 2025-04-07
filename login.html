@@ -4,7 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left-side {
+            flex: 0.9;
+            background: url('gambar/LoginScreen.png') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .right-side {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #f8f8f8;
+        }
+
+        .login-box {
+            width: 400px;  
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .login-box p {
+            color: grey;
+            margin-bottom: 20px;
+        }
+
+        .login-box label {
+            display: block;
+            text-align: left;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .forgot-password {
+            text-align: right;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .login-box button:hover {
+            background: #2980b9;
+        }
+
+        .google-login-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .google-login {
+            cursor: pointer;
+            background: url('gambar/Googlelogo.png') no-repeat center center/contain;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
+
+        .signup {
+            margin-top: 20px;
+            color: grey;
+        }
+
+        .signup a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,23 +130,29 @@
             <div class="login-box" id="loginForm">
                 <h2>Login!</h2>
                 <p>Take Control of Your Finances Effortlessly!</p>
+               
                 <!-- Email Input -->
                 <label for="email">Email</label>
                 <input type="email" placeholder="Enter Your Email" id="email">
+               
                 <!-- Password Input -->
                 <label for="password">Password</label>
                 <input type="password" placeholder="Enter Your Password" id="password">
+               
                 <!-- Forgot Password Link -->
                 <div class="forgot-password">
                     <a href="#" onclick="event.preventDefault(); forgotPassword();">Forgot Password?</a>
                 </div>
+               
                 <!-- Submit Button -->
                 <button id="submitButton" onclick="login()">Submit</button>
+               
                 <!-- Or Login With Google -->
                 <p>Or Login With</p>
                 <div class="google-login-container">
                     <div class="google-login" onclick="signInWithGoogle()"></div>
                 </div>
+               
                 <!-- Sign Up Link -->
                 <div class="signup">
                     Don’t Have an Account Yet? <a onclick="goToSignUp()">Sign Up</a>
@@ -39,6 +162,122 @@
     </div>
 
     <!-- Firebase Script -->
-    <script type="module" src="script.js"></script>
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+            authDomain: "nextgrowthgroup.firebaseapp.com",
+            databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
+            projectId: "nextgrowthgroup",
+            storageBucket: "nextgrowthgroup.firebasestorage.app",
+            messagingSenderId: "658734405364",
+            appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+            measurementId: "G-Y5DB2XL0TH"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Google Login Function
+        window.signInWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("User berhasil login:", result.user);
+                alert("Login Berhasil! Selamat datang, " + result.user.displayName);
+
+                // Redirect ke dashboard.html
+                window.location.replace('/dashboard.html');
+            } catch (error) {
+                console.error("Error saat login:", error);
+                alert("Login gagal! " + error.message);
+            }
+        };
+
+        // Email & Password Login with Validation
+        window.login = async () => {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginForm = document.getElementById('loginForm');
+            const submitButton = document.getElementById('submitButton');
+
+            // Validasi input
+            if (!email || !password) {
+                alert("Email dan password harus diisi!");
+                return;
+            }
+
+            // Loading indicator
+            submitButton.disabled = true;
+            submitButton.textContent = "Loading...";
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                alert("Login berhasil!");
+
+                // Redirect ke dashboard.html
+                window.location.replace('/dashboard.html');
+            } catch (error) {
+                if (error.code === "auth/wrong-password") {
+                    alert("Password salah!");
+
+                    // Feedback visual: Ubah warna input jadi merah
+                    const passwordInput = document.getElementById('password');
+                    passwordInput.style.borderColor = "red";
+
+                    // Feedback visual: Tambah efek getaran (inline CSS)
+                    if (!document.getElementById('shakeStyle')) {
+                        const style = document.createElement('style');
+                        style.id = 'shakeStyle';
+                        style.innerHTML = `
+                            @keyframes shake {
+                                0%, 100% { transform: translateX(0); }
+                                25% { transform: translateX(-10px); }
+                                75% { transform: translateX(10px); }
+                            }
+                            .shake {
+                                animation: shake 0.5s;
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                    loginForm.classList.add("shake");
+                    setTimeout(() => loginForm.classList.remove("shake"), 500);
+                } else if (error.code === "auth/user-not-found") {
+                    alert("User tidak ditemukan! Silakan daftar terlebih dahulu.");
+                } else {
+                    alert("Login gagal! " + error.message);
+                }
+            } finally {
+                // Kembalikan tombol ke state awal
+                submitButton.disabled = false;
+                submitButton.textContent = "Submit";
+            }
+        };
+
+        // Forgot Password Function
+        window.forgotPassword = async () => {
+            const email = prompt("Masukkan email kamu:");
+            if (email) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert("Link reset password sudah dikirim ke email kamu!");
+                } catch (error) {
+                    console.error("Gagal mengirim link reset password:", error.message);
+                    alert("Gagal mengirim link reset password: " + error.message);
+                }
+            }
+        };
+
+        // Redirect to Sign-Up Page
+        window.goToSignUp = () => {
+            window.location.href = 'signup.html';
+        };
+    </script>
 </body>
 </html>
