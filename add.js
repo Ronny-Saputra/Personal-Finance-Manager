@@ -44,6 +44,29 @@ function cancelForm() {
   }
 }
 
+function selectType(type) {
+  selectedType = type;
+
+  // Toggle visual style
+  document.querySelectorAll(".toggle-btn").forEach(btn => btn.classList.remove("selected"));
+  document.querySelector(`.toggle-btn.${type}`).classList.add("selected");
+
+  // Enable/disable category buttons based on type
+  const categoryButtons = document.querySelectorAll(".category-grid button");
+  categoryButtons.forEach(btn => {
+    if (type === "income") {
+      btn.setAttribute("disabled", true);
+      btn.classList.add("disabled");
+      btn.classList.remove("selected");
+      selectedCategory = null;
+    } else {
+      btn.removeAttribute("disabled");
+      btn.classList.remove("disabled");
+    }
+  });
+}
+
+
 // Optional: Logout
 document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logout-button");

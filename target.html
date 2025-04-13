@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Savings Target</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    .main-content {
+      margin-left: 250px; /* to avoid sidebar overlap */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="welcome-message">Welcome, Darren</div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html" class="menu-item">
+        <img src="Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+      <a href="income.html" class="menu-item">
+        <img src="Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+      <a href="transactions.html" class="menu-item">
+        <img src="Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+      <a href="reportss.html" class="menu-item">
+        <img src="Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+      <a href="target.html" class="menu-item active">
+        <img src="Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+      <a href="add.html" class="menu-item">
+        <img src="Logos/adding_logo.png" alt="Add">
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="menu-item" id="logout-button">
+        <img src="Logos/logout_logo.png" alt="Logout">
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Monthly Saving Target Calculator (IDR)</h2>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="data-section">
+        <div class="data-card" style="width: 100%; text-align: center;">
+          <label for="income"><strong>Monthly Income (Rp):</strong></label><br>
+          <input type="number" id="income" placeholder="Enter your income" min="100000" required style="width: 60%; padding: 10px; margin: 10px 0; font-size: 16px;">
+
+          <label for="savings" class="input-label"><strong>Saving Percentage (%)</strong></label><br>
+          <input type="number" id="savings" placeholder="Enter percentage" value="20" required style="width: 60%; padding: 10px; margin: 10px 0; font-size: 16px;">
+
+          <br>
+          <button onclick="calculateSavings()" style="padding: 10px 30px; font-size: 16px; margin: 15px 0;">Calculate</button>
+
+          <h3 id="result"></h3>
+          <p id="breakdown"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="target.js"></script>
+</body>
+</html>

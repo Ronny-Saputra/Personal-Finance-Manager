@@ -10,28 +10,28 @@
   <div class="sidebar">
     <div class="welcome-message">Welcome, Darren</div>
     <div class="sidebar-menu">
-      <a href="dashboard.html" class="menu-item">
+      <a href="dashboard.html" class="menu-item"> 
         <img src="Logos/dashboard_logo.png" alt="Dashboard">
         <span>Dashboard</span>
       </a>
-      <a href="income.html" class="menu-item">
+      <a href="income.html" class="menu-item"> 
         <img src="Logos/expenses_logo.png" alt="Expenses">
         <span>Expenses and Income</span>
       </a>
-      <a href="transactions.html" class="menu-item active">
+      <a href="transactions.html" class="menu-item active"> 
         <img src="Logos/transactions_logo.png" alt="Transactions">
         <span>Transactions</span>
       </a>
-      <a href="#" class="menu-item">
+      <a href="reportss.html" class="menu-item"> 
         <img src="Logos/reports_logo.png" alt="Reports">
         <span>Monthly Reports</span>
       </a>
-      <a href="#" class="menu-item">
+      <a href="target.html" class="menu-item"> 
         <img src="Logos/monthly_logo.png" alt="Savings">
         <span>Monthly Savings Target</span>
       </a>
-      <a href="#" class="menu-item">
-        <img src="Logos/adding_logo.png" alt="Add">
+      <a href="add.html" class="menu-item"> 
+        <img src="Logos/adding_logo.png" alt="Add Income and Expenses">
         <span>Add Income and Expenses</span>
       </a>
     </div>
@@ -49,75 +49,255 @@
         <img src="Logos/search_logo.png" alt="Search Icon" />
         <input type="text" placeholder="Search..." />
       </div>
-
       <div class="duration-box">
         <label class="duration-label" for="duration-select">Duration</label>
         <select id="duration-select" class="duration-select">
-          <option>Last 5 Months</option>
-          <option>Last 3 Months</option>
-          <option>This Month</option>
-          <option>This Year</option>
+          <option selected>January</option>
+          <option>February</option>
+          <option>March</option>
+          <option>April</option>
         </select>
       </div>
     </div>
 
     <div class="main-content">
-      <div class="section-title">Last 5 Months</div>
+      <div class="section-title" id="duration-display">January</div>
 
       <div class="transactions-container">
-        <!-- Month 5 -->
-        <div class="month-box">Month 5</div>
-        <div class="balance">Balance Rp 0</div>
+        <div class="month-box">January Breakdown</div>
+
+        <!-- Day 1 -->
+        <div class="section-title">Day 1</div>
         <div class="transaction-rows">
           <div style="flex: 1;">
             <ul class="category-list">
               <li>Food and Drinks</li>
               <li>Entertainment</li>
+            </ul>
+          </div>
+          <div class="amount-column" style="flex: 1;">
+            <div>Rp 60.000</div>
+            <div>Rp 70.000</div>
+          </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="section-title">Day 2</div>
+        <div class="transaction-rows">
+          <div style="flex: 1;">
+            <ul class="category-list">
               <li>Transportation</li>
-              <li>Payments</li>
-              <li>Living Expenses</li>
               <li>Groceries</li>
             </ul>
           </div>
           <div class="amount-column" style="flex: 1;">
-            <div>Rp 1.102.200</div>
-            <div>Rp 825.000</div>
-            <div>Rp 917.400</div>
-            <div>Rp 1.280.400</div>
-            <div>Rp 1.372.800</div>
-            <div>Rp 1.102.200</div>
+            <div>Rp 50.000</div>
+            <div>Rp 110.000</div>
           </div>
         </div>
-        <div class="total-row">
-          <div class="total-label">Total</div>
-          <div class="total-value">Rp 6.600.000</div>
+
+        <!-- Day 3 -->
+        <div class="section-title">Day 3</div>
+        <div class="transaction-rows">
+          <div style="flex: 1;">
+            <ul class="category-list">
+              <li>Living Expenses</li>
+              <li>Payments</li>
+            </ul>
+          </div>
+          <div class="amount-column" style="flex: 1;">
+            <div>Rp 180.000</div>
+            <div>Rp 140.000</div>
+          </div>
         </div>
 
-        <!-- Month 4 -->
-        <div class="month-box">Month 4</div>
-        <div class="balance">Balance Rp 6.600.000</div>
+        <!-- Day 4 -->
+        <div class="section-title">Day 4</div>
         <div class="transaction-rows">
           <div style="flex: 1;">
             <ul class="category-list">
               <li>Food and Drinks</li>
-              <li>Entertainment</li>
               <li>Transportation</li>
-              <li>Payments</li>
-              <li>Living Expenses</li>
+            </ul>
+          </div>
+          <div class="amount-column" style="flex: 1;">
+            <div>Rp 90.000</div>
+            <div>Rp 60.000</div>
+          </div>
+        </div>
+
+        <!-- Day 5 -->
+        <div class="section-title">Day 5</div>
+        <div class="transaction-rows">
+          <div style="flex: 1;">
+            <ul class="category-list">
+              <li>Entertainment</li>
               <li>Groceries</li>
             </ul>
           </div>
           <div class="amount-column" style="flex: 1;">
-            <div>Rp 1.252.500</div>
-            <div>Rp 937.500</div>
-            <div>Rp 1.042.500</div>
-            <div>Rp 1.455.000</div>
-            <div>Rp 1.560.000</div>
-            <div>Rp 1.252.500</div>
+            <div>Rp 75.000</div>
+            <div>Rp 100.000</div>
           </div>
         </div>
 
-        <div class="duration">Last 5 Months</div>
+        $1
+
+<!-- FEBRUARY -->
+<div class="transactions-container" style="display: none;" data-month="February">
+  <div class="month-box">February Breakdown</div>
+
+  <div class="section-title">Day 1</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Internet</li>
+        <li>Fuel</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 200.000</div>
+      <div>Rp 180.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 2</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Phone Bill</li>
+        <li>Groceries</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 250.000</div>
+      <div>Rp 220.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 3</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Insurance</li>
+        <li>Living Expenses</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 300.000</div>
+      <div>Rp 180.000</div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <div class="total-label">Total</div>
+    <div class="total-value">Rp 6.000.000</div>
+  </div>
+</div>
+
+<!-- MARCH -->
+<div class="transactions-container" style="display: none;" data-month="March">
+  <div class="month-box">March Breakdown</div>
+
+  <div class="section-title">Day 1</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Food and Drinks</li>
+        <li>Groceries</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 230.000</div>
+      <div>Rp 250.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 2</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Electricity</li>
+        <li>Fuel</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 270.000</div>
+      <div>Rp 250.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 3</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Entertainment</li>
+        <li>Transportation</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 220.000</div>
+      <div>Rp 180.000</div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <div class="total-label">Total</div>
+    <div class="total-value">Rp 5.600.000</div>
+  </div>
+</div>
+
+<!-- APRIL -->
+<div class="transactions-container" style="display: none;" data-month="April">
+  <div class="month-box">April Breakdown</div>
+
+  <div class="section-title">Day 1</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Living Expenses</li>
+        <li>Phone Bill</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 300.000</div>
+      <div>Rp 280.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 2</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Entertainment</li>
+        <li>Groceries</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 270.000</div>
+      <div>Rp 250.000</div>
+    </div>
+  </div>
+
+  <div class="section-title">Day 3</div>
+  <div class="transaction-rows">
+    <div style="flex: 1;">
+      <ul class="category-list">
+        <li>Insurance</li>
+        <li>Fuel</li>
+      </ul>
+    </div>
+    <div class="amount-column" style="flex: 1;">
+      <div>Rp 300.000</div>
+      <div>Rp 270.000</div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <div class="total-label">Total</div>
+    <div class="total-value">Rp 6.300.000</div>
+  </div>
+</div>
       </div>
     </div>
   </div>

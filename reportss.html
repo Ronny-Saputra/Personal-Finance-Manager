@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Reports</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="welcome-message">Welcome, Darren</div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html" class="menu-item">
+        <img src="Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+      <a href="income.html" class="menu-item">
+        <img src="Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+      <a href="transactions.html" class="menu-item">
+        <img src="Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+      <a href="reportss.html" class="menu-item active">
+        <img src="Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+      <a href="target.html" class="menu-item">
+        <img src="Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+      <a href="add.html" class="menu-item">
+        <img src="Logos/adding_logo.png" alt="Add">
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="menu-item" id="logout-button">
+        <img src="Logos/logout_logo.png" alt="Logout">
+        <span>Logout</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Monthly Expense Overview</h2>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="graph-container">
+        <canvas id="expensesChart"></canvas>
+      </div>
+
+      <div class="data-section">
+        <div class="data-card">
+          <h3>Expense Breakdown</h3>
+          <table class="data-table">
+            <tr><th>Category</th><th>Budget</th><th>Expense</th><th>+/−</th></tr>
+            <tr><td>Phone bill</td><td>Rp 500,000</td><td>Rp 500,000</td><td>Rp 0</td></tr>
+            <tr><td>Internet</td><td>Rp 520,000</td><td>Rp 520,000</td><td>Rp 0</td></tr>
+            <tr><td>Electricity</td><td>Rp 800,000</td><td>Rp 800,000</td><td>Rp 0</td></tr>
+            <tr><td>Food</td><td>Rp 1,200,000</td><td>Rp 1,200,000</td><td>Rp 0</td></tr>
+            <tr><td>Fuel</td><td>Rp 520,000</td><td>Rp 500,000</td><td>+Rp 20,000</td></tr>
+            <tr><td>Insurance</td><td>Rp 500,000</td><td>Rp 500,000</td><td>Rp 0</td></tr>
+            <tr class="total-row"><td colspan="3">Total Spent</td><td>Rp 4,320,000</td></tr>
+          </table>
+        </div>
+
+        <div class="data-card">
+          <h3>Summary</h3>
+          <table class="data-table">
+            <tr><td>Budgeted Amount</td><td>Rp 4,150,000</td></tr>
+            <tr><td>Amount Spent</td><td>Rp 4,320,000</td></tr>
+            <tr class="total-row"><td>Exceeded</td><td>Rp 170,000</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="reportss.js"></script>
+</body>
+</html>
