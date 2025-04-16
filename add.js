@@ -5,7 +5,26 @@ function selectType(type) {
   selectedType = type;
   document.querySelectorAll(".toggle-btn").forEach(btn => btn.classList.remove("selected"));
   document.querySelector(`.toggle-btn.${type}`).classList.add("selected");
+
+  const categoryButtons = document.querySelectorAll(".category-grid button");
+
+  if (type === "income") {
+    selectedCategory = null;
+    categoryButtons.forEach(btn => {
+      btn.classList.remove("selected");
+      btn.disabled = true;
+      btn.style.opacity = 0.5;
+      btn.style.cursor = "not-allowed";
+    });
+  } else {
+    categoryButtons.forEach(btn => {
+      btn.disabled = false;
+      btn.style.opacity = 1;
+      btn.style.cursor = "pointer";
+    });
+  }
 }
+
 
 function selectCategory(button) {
   document.querySelectorAll(".category-grid button").forEach(btn => btn.classList.remove("selected"));
@@ -14,70 +33,28 @@ function selectCategory(button) {
 }
 
 function submitForm() {
-  const amount = document.getElementById("amount").value;
+  const amount = parseFloat(document.getElementById("amount").value);
   const date = document.getElementById("date").value;
   const time = document.getElementById("time").value;
 
-  if (!amount || !selectedCategory || !date || !time) {
-    alert("Please fill in all fields.");
+  if (!amount || !date || !time || (selectedType === "expense" && !selectedCategory)) {
+    alert("Please fill in all required fields.");
     return;
   }
+  
 
-  console.log("Form Submitted:", {
+  const transaction = {
     type: selectedType,
-    amount,
     category: selectedCategory,
+    amount,
     date,
-    time,
-  });
+    time
+  };
+
+  let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+  transactions.push(transaction);
+  localStorage.setItem("transactions", JSON.stringify(transactions));
 
   alert("Transaction successfully added!");
+  location.reload();
 }
-
-function cancelForm() {
-  if (confirm("Clear the form?")) {
-    document.getElementById("amount").value = "";
-    document.getElementById("date").value = "";
-    document.getElementById("time").value = "";
-    selectedCategory = null;
-    document.querySelectorAll(".category-grid button").forEach(btn => btn.classList.remove("selected"));
-  }
-}
-
-function selectType(type) {
-  selectedType = type;
-
-  // Toggle visual style
-  document.querySelectorAll(".toggle-btn").forEach(btn => btn.classList.remove("selected"));
-  document.querySelector(`.toggle-btn.${type}`).classList.add("selected");
-
-  // Enable/disable category buttons based on type
-  const categoryButtons = document.querySelectorAll(".category-grid button");
-  categoryButtons.forEach(btn => {
-    if (type === "income") {
-      btn.setAttribute("disabled", true);
-      btn.classList.add("disabled");
-      btn.classList.remove("selected");
-      selectedCategory = null;
-    } else {
-      btn.removeAttribute("disabled");
-      btn.classList.remove("disabled");
-    }
-  });
-}
-
-
-// Optional: Logout
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logout-button");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      if (confirm("Are you sure you want to logout?")) {
-        window.location.href = "login.html";
-      }
-    });
-  }
-
-  // Set default type
-  selectType("income");
-});

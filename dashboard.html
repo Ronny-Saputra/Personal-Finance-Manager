@@ -55,41 +55,41 @@
 
     <div class="dashboard-grid">
       <!-- Graph placeholders -->
+      <!-- Income Chart Section -->
       <div class="graph-container">
-        <div class="graph-placeholder">Income Trend Graph (Coming Soon)</div>
+        <canvas id="incomeChart"></canvas>
       </div>
 
+
       <div class="graph-container">
-        <div class="graph-placeholder">Expense Breakdown Graph (Coming Soon)</div>
+        <canvas id="expenseChart"></canvas>
       </div>
+      
 
       <!-- Data tables -->
       <div class="data-section">
         <div class="data-card">
           <h3>Income Summary</h3>
-          <table class="data-table">
+          <table class="data-table" id="income-summary">
             <tr><th>Month</th><th>Amount</th></tr>
-            <tr><td>January</td><td>Rp. 5.500.000,00</td></tr>
-            <tr><td>February</td><td>Rp. 6.000.000,00</td></tr>
-            <tr><td>March</td><td>Rp. 5.600.000,00</td></tr>
-            <tr class="total-row"><td>Total</td><td>Rp. 34,400,000,00</td></tr>
+            <!-- Dynamic content inserted by JS -->
           </table>
         </div>
+        
 
         <div class="data-card">
           <h3>Expense Percentage</h3>
-          <table class="data-table">
+          <table class="data-table" id="expense-percentage">
             <tr><th>Category</th><th>Percentage</th></tr>
-            <tr><td>Food and Drink</td><td>15%</td></tr>
-            <tr><td>Entertainment</td><td>12%</td></tr>
-            <tr><td>Living Expenses</td><td>20%</td></tr>
-            <tr class="total-row"><td>Total</td><td>100%</td></tr>
+            <!-- dynamic rows inserted here -->
           </table>
         </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>
