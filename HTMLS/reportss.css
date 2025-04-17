@@ -1,0 +1,175 @@
+/* Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+  body {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    width: 300px;
+    background: url('Background.png') no-repeat center center/cover;
+    color: black;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+  }
+  
+  .welcome-message {
+    font-size: 25px;
+    margin-bottom: 40px;
+    margin-top: 200px;
+    font-weight: bold;
+  }
+  
+  .sidebar-menu {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+  
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+  }
+  
+  .menu-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-left: 4px solid rgba(0, 0, 0, 0.2);
+  }
+  
+  .menu-item.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 4px solid black;
+  }
+  
+  .menu-item img {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+  }
+  
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Main Content Styles */
+.main-content {
+    flex-grow: 1;
+    margin-left: 300px;
+    padding: 30px;
+  }
+  
+  .welcome-header {
+    margin-bottom: 20px;
+  }
+  
+  .header-with-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Align title and selector */
+  }
+  
+  .month-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between label and dropdown */
+  }
+  
+  .month-selector select {
+    padding: 5px;
+    width: 150px; /* Keep the dropdown compact */
+    border: 1px solid #ccc;
+  }
+  
+  /* Chart Container */
+  .chart-container {
+    background: #fff; /* White background for the chart */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Space between chart and tables */
+    display: flex; /* Center the chart horizontally */
+    justify-content: center; /* Center alignment */
+    align-items: center; /* Center alignment */
+    width: 2200px; /* Reduce the width of the chart container */
+    max-width: 100%; /* Ensure responsiveness */
+    height: 400px; /* Fixed height for consistent sizing */
+  }
+  
+  .chart-container canvas {
+    max-width: 100%; /* Ensure the chart fits within the container */
+    height: 100%; /* Maintain aspect ratio */
+  }
+  
+  /* Data Section */
+  .data-section {
+    display: flex;
+    gap: 20px; /* Space between Expense Breakdown and Summary */
+  }
+  
+  .data-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Allow both cards to take up equal space */
+    min-height: 300px; /* Ensure equal height for both boxes */
+    width: calc(50% - 10px); /* Ensure equal width for both boxes */
+  }
+  
+  /* Table Styles */
+  .data-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .data-table th,
+  .data-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .total-row {
+    font-weight: bold;
+  }
+  
+  /* Summary Table */
+  .summary {
+    background: #fff3cd; /* Light yellow background for summary */
+    padding: 10px;
+    margin-top: 1px;
+  }
+  
+  .summary table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .summary table tr td:first-child {
+    font-weight: bold;
+  }
+  
+  .summary table tr td:last-child {
+    text-align: right;
+  }
