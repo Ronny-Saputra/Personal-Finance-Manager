@@ -37,6 +37,9 @@
     </div>
   </div>
 
+
+
+
   <div class="main-content">
     <div class="welcome-header">
       <h2>Monthly Expense Overview</h2>
@@ -46,6 +49,65 @@
         <option>September</option><option>October</option><option>November</option><option>December</option>
       </select>
     </div>
+
+
+
+
+    <!-- Budget and Expense Setting Form -->
+    <div class="budget-form" style="margin-top: 20px;">
+      <h3>Set Monthly Budgets and Expenses</h3>
+      <table class="data-table" id="budget-expense-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Budget (Rp)</th>
+            <th>Expense (Rp)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Phone Bill</td>
+            <td><input type="number" class="budget-input" data-category="Phone Bill" value="500000"></td>
+            <td><input type="number" class="expense-input" data-category="Phone Bill" value="450000"></td>
+          </tr>
+          <tr>
+            <td>Internet</td>
+            <td><input type="number" class="budget-input" data-category="Internet" value="300000"></td>
+            <td><input type="number" class="expense-input" data-category="Internet" value="250000"></td>
+          </tr>
+          <tr>
+            <td>Electricity</td>
+            <td><input type="number" class="budget-input" data-category="Electricity" value="400000"></td>
+            <td><input type="number" class="expense-input" data-category="Electricity" value="350000"></td>
+          </tr>
+          <tr>
+            <td>Food</td>
+            <td><input type="number" class="budget-input" data-category="Food" value="1500000"></td>
+            <td><input type="number" class="expense-input" data-category="Food" value="1400000"></td>
+          </tr>
+          <tr>
+            <td>Fuel</td>
+            <td><input type="number" class="budget-input" data-category="Fuel" value="600000"></td>
+            <td><input type="number" class="expense-input" data-category="Fuel" value="550000"></td>
+          </tr>
+          <tr>
+            <td>Insurance</td>
+            <td><input type="number" class="budget-input" data-category="Insurance" value="800000"></td>
+            <td><input type="number" class="expense-input" data-category="Insurance" value="700000"></td>
+          </tr>
+          <tr>
+            <td>Miscellaneous</td>
+            <td><input type="number" class="budget-input" data-category="Miscellaneous" value="200000"></td>
+            <td><input type="number" class="expense-input" data-category="Miscellaneous" value="150000"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="save-budgets" style="margin-top: 10px; padding: 10px 20px;">Save Budgets</button>
+      <button id="save-expenses" style="margin-top: 10px; padding: 10px 20px;">Save Expenses</button>
+    </div>
+
+
+
 
     <!-- Centered Chart -->
     <div style="
@@ -62,6 +124,9 @@
         <canvas id="monthlyExpenseChart"></canvas>
       </div>
     </div>
+
+
+
 
     <!-- Expense Breakdown Table -->
     <div class="data-card" style="margin-top: 30px;">
@@ -82,7 +147,14 @@
     </div>
   </div>
 
+
+
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="reportss.js"></script>
 </body>
 </html>
+
+
+
+
