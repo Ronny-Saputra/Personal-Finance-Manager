@@ -1,50 +1,152 @@
-// script.js
+let currentSavings = {}; // Track current savings contributions per month
+
+// Format numbers with thousand separators for input fields
+document.getElementById("income").addEventListener("input", function (e) {
+  let raw = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
+  if (raw.length === 0) {
+    e.target.value = "";
+    return;
+  }
+  // Add thousand separators
+  e.target.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+});
+
+document.getElementById("contribution").addEventListener("input", function (e) {
+  let raw = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
+  if (raw.length === 0) {
+    e.target.value = "";
+    return;
+  }
+  // Add thousand separators
+  e.target.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+});
+
+// Calculate savings target
 function calculateSavings() {
-    let income = parseFloat(document.getElementById("income").value);
-    let savingsPercentage = parseFloat(document.getElementById("savings").value);
-    
-    if (isNaN(income) || income <= 0 || isNaN(savingsPercentage) || savingsPercentage < 0 || savingsPercentage > 100) {
-        document.getElementById("result").innerHTML = "Please enter valid numbers";
-        document.getElementById("breakdown").innerHTML = "";
-        return;
-    }
-    
-    let savingAmount = (income * savingsPercentage) / 100;
-    let needs = (income * 50) / 100;
-    let wants = (income * 30) / 100;
-    
-    document.getElementById("result").innerHTML = `Your Saving Target: Rp ${savingAmount.toLocaleString("id-ID")}`;
-    document.getElementById("breakdown").innerHTML = `
-        Suggested Allocation:<br>
-        Needs: Rp ${needs.toLocaleString("id-ID")}<br>
-        Wants: Rp ${wants.toLocaleString("id-ID")}<br>
-        Savings: Rp ${savingAmount.toLocaleString("id-ID")}
-    `;
+  const selectedMonth = document.getElementById("month").value;
+  const incomeInput = document.getElementById("income").value.replace(/\./g, '');
+  const income = parseFloat(incomeInput);
+  const percentage = parseFloat(document.getElementById("percentage").value);
+
+  if (isNaN(income) || isNaN(percentage)) {
+    alert("Please enter valid income and percentage.");
+    return;
+  }
+
+  const savingsGoal = (income * percentage) / 100; // Total savings goal
+  const formattedSavingsGoal = savingsGoal.toLocaleString("id-ID");
+
+  document.getElementById("result").textContent = `Savings Goal: Rp ${formattedSavingsGoal}`;
+
+  const needs = income * 0.5;
+  const wants = income * 0.3;
+  const formattedNeeds = needs.toLocaleString("id-ID");
+  const formattedWants = wants.toLocaleString("id-ID");
+
+  document.getElementById("allocation").innerHTML = `
+    <h4>Suggested Allocation:</h4>
+    <div><strong>Needs (50%)</strong>: Rp ${formattedNeeds}</div>
+    <div><strong>Wants (30%)</strong>: Rp ${formattedWants}</div>
+    <div><strong>Savings (${percentage}%)</strong>: Rp ${formattedSavingsGoal}</div>
+  `;
 }
 
+// Save savings data to localStorage
 function saveSavings() {
-    const monthlyIncome = parseFloat(document.getElementById("income").value);
-    const savingsPercentage = parseFloat(document.getElementById("savings").value);
-    const resultText = document.getElementById("result").textContent;
+  const selectedMonth = document.getElementById("month").value;
+  const rawIncome = document.getElementById("income").value;
+  const income = parseFloat(rawIncome.replace(/\./g, ''));
+  const percentage = parseFloat(document.getElementById("percentage").value);
 
-    const match = resultText.match(/Rp\s?([\d,.]+)/);
-    const recommendedSavings = match ? parseInt(match[1].replace(/\./g, '').replace(/,/g, '')) : NaN;
+  if (isNaN(income) || isNaN(percentage)) {
+    alert("Please enter valid income and percentage.");
+    return;
+  }
 
-    if (!monthlyIncome || !savingsPercentage || isNaN(recommendedSavings)) {
-        alert("Please fill in and calculate your savings first.");
-        return;
-    }
+  const savingsGoal = (income * percentage) / 100; // Total savings goal
 
-    const newEntry = {
-        monthlyIncome,
-        savingsPercentage,
-        recommendedSavings,
-        createdAt: new Date().toISOString()
-    };
+  // Create the savings data object
+  const savingsData = {
+    month: selectedMonth,
+    monthlyIncome: income, // Monthly income
+    savingsPercentage: percentage, // Savings percentage
+    targetAmount: savingsGoal, // Total savings goal
+    recommendedSavings: currentSavings[selectedMonth] || 0, // Contributions so far
+    createdAt: new Date().toISOString() // Timestamp
+  };
 
-    let savingsData = JSON.parse(localStorage.getItem("savingsData")) || [];
-    savingsData.push(newEntry);
-    localStorage.setItem("savingsData", JSON.stringify(savingsData));
+  // Retrieve existing savings data from localStorage
+  let savingsHistory = JSON.parse(localStorage.getItem("savingsData")) || [];
 
-    alert("Savings data has been saved!");
+  // Check if an entry for the selected month already exists
+  const existingEntryIndex = savingsHistory.findIndex(item => item.month === selectedMonth);
+  if (existingEntryIndex !== -1) {
+    // Update the existing entry
+    savingsHistory[existingEntryIndex] = savingsData;
+  } else {
+    // Add a new entry
+    savingsHistory.push(savingsData);
+  }
+
+  // Save updated data back to localStorage
+  localStorage.setItem("savingsData", JSON.stringify(savingsHistory));
+  alert("Savings plan saved!");
+  showHistory(); // Refresh history display after saving
 }
+
+// Display savings history from localStorage
+function showHistory() {
+  const history = JSON.parse(localStorage.getItem("savingsData")) || [];
+  console.log("Data loaded from localStorage:", history); // Debugging log
+
+  const historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
+
+  if (history.length === 0) {
+    historyDiv.innerText = "No savings history found.";
+    return;
+  }
+
+  history.forEach(entry => {
+    const div = document.createElement("div");
+    div.innerText =
+      `Month: ${entry.month} | Date: ${new Date(entry.createdAt).toLocaleDateString("id-ID")} | Amount: Rp ${entry.monthlyIncome.toLocaleString("id-ID")} | Percentage: ${entry.savingsPercentage}% | Savings Goal: Rp ${entry.targetAmount.toLocaleString("id-ID")} | Contributions: Rp ${entry.recommendedSavings.toLocaleString("id-ID")}`;
+    historyDiv.appendChild(div);
+  });
+}
+
+// Add contribution to current savings
+function addContribution() {
+  const selectedMonth = document.getElementById("month").value;
+  const rawContribution = document.getElementById("contribution").value.replace(/\./g, ''); // Remove dots before converting to number
+  const contribution = parseFloat(rawContribution);
+
+  if (isNaN(contribution) || contribution <= 0) {
+    alert("Please enter a valid contribution amount.");
+    return;
+  }
+
+  // Retrieve existing savings data from localStorage
+  let savingsHistory = JSON.parse(localStorage.getItem("savingsData")) || [];
+  const entry = savingsHistory.find(item => item.month === selectedMonth);
+
+  if (entry) {
+    // Add the contribution to the existing recommendedSavings
+    entry.recommendedSavings += contribution;
+
+    // Save updated data back to localStorage
+    localStorage.setItem("savingsData", JSON.stringify(savingsHistory));
+    alert("Contribution added!");
+    showHistory(); // Refresh history display after adding contribution
+  } else {
+    alert("No savings plan found for the selected month.");
+  }
+
+  // Clear input field
+  document.getElementById("contribution").value = "";
+}
+
+// Load history on page load
+document.addEventListener("DOMContentLoaded", () => {
+  showHistory(); // Display history when page loads
+});
