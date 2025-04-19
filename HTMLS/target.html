@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Monthly Savings Target</title>
-  <link rel="stylesheet" href="target.css">     <!-- Calculator-specific styles -->
+  <link rel="stylesheet" href="target.css" />
   <style>
     .main-content {
-      margin-left: 250px; /* to avoid sidebar overlap */
+      margin-left: 250px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -20,74 +20,90 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="app-title"></div>
-    
     <div class="welcome-message">Welcome, Darren</div>
-    
     <div class="sidebar-menu">
-      <a href="dashboard.html" class="menu-item"> 
-        <img src="Logos/dashboard_logo.png" alt="Dashboard">
-        <span>Dashboard</span>
-      </a>
-    
-      <a href="income.html" class="menu-item"> 
-        <img src="Logos/expenses_logo.png" alt="Expenses">
-        <span>Expenses and Income</span>
-      </a>
-    
-      <a href="transactions.html" class="menu-item"> 
-        <img src="Logos/transactions_logo.png" alt="Transactions">
-        <span>Transactions</span>
-      </a>
-    
-      <a href="reportss.html" class="menu-item"> 
-        <img src="Logos/reports_logo.png" alt="Reports">
-        <span>Monthly Reports</span>
-      </a>
-    
-      <a href="target.html" class="menu-item active"> 
-        <img src="Logos/monthly_logo.png" alt="Savings">
-        <span>Monthly Savings Target</span>
-      </a>
-    
-      <a href="add.html" class="menu-item"> 
-        <img src="Logos/adding_logo.png" alt="Add Income and Expenses">
-        <span>Add Income and Expenses</span>
-      </a>
+      <a href="dashboard.html" class="menu-item"><img src="Logos/dashboard_logo.png" alt="Dashboard"><span>Dashboard</span></a>
+      <a href="income.html" class="menu-item"><img src="Logos/expenses_logo.png" alt="Expenses"><span>Expenses and Income</span></a>
+      <a href="transactions.html" class="menu-item"><img src="Logos/transactions_logo.png" alt="Transactions"><span>Transactions</span></a>
+      <a href="reportss.html" class="menu-item"><img src="Logos/reports_logo.png" alt="Reports"><span>Monthly Reports</span></a>
+      <a href="target.html" class="menu-item active"><img src="Logos/monthly_logo.png" alt="Savings"><span>Monthly Savings Target</span></a>
+      <a href="add.html" class="menu-item"><img src="Logos/adding_logo.png" alt="Add Income and Expenses"><span>Add Income and Expenses</span></a>
     </div>
-
-    
     <div class="sidebar-footer">
-      <div class="menu-item" id="logout-button">
-        <img src="Logos/logout_logo.png" alt="Logout">
-        <span>Logout</span>
-      </div>
+      <div class="menu-item" id="logout-button"><img src="Logos/logout_logo.png" alt="Logout"><span>Logout</span></div>
     </div>
   </div>
-
   <div class="main-content">
     <div class="welcome-header">
       <h2>Monthly Saving Target Calculator (IDR)</h2>
     </div>
-
-    <div class="calculator-wrapper">
-      <div class="calculator">
-        <label for="income"><strong>Monthly Income (Rp):</strong></label><br>
-        <input type="number" id="income" placeholder="Enter your income" min="100000" required>
-
-        <label for="savings" class="input-label"><strong>Saving Percentage (%)</strong></label><br>
-        <input type="number" id="savings" placeholder="Enter percentage" value="20" required>
-
-        <br>
-        <button onclick="calculateSavings()">Calculate</button>
-        <button onclick="saveSavings()">Save</button>
-
-
-        <h3 id="result"></h3>
-        <p id="breakdown"></p>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" onclick="switchTab('calculator-tab')">Calculator</button>
+      <button class="tab-button" onclick="switchTab('history-tab')">History</button>
+    </div>
+    <!-- Calculator -->
+    <div id="calculator-tab" class="tab-content active">
+      <div class="calculator-wrapper">
+        <div class="calculator">
+          <!-- New Feature: Select Month -->
+          <div class="month-selector">
+            <label for="month"><strong>Select Month:</strong></label>
+            <select id="month" required>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+          <label for="income"><strong>Enter Amount (Rp):</strong></label><br />
+          <input type="text" id="income" placeholder="Contoh: 100.000.000" required />
+          <label for="percentage" class="input-label"><strong>Saving Percentage (%)</strong></label><br />
+          <input type="number" id="percentage" placeholder="Enter percentage" value="20" min="0" max="100" required />
+          <br />
+          <button onclick="calculateSavings()">Calculate</button>
+          <button onclick="saveSavings()">Save</button>
+          <h3 id="result"></h3>
+          <p id="breakdown"></p>
+          <div id="allocation"></div>
+          <!-- Add Contribution -->
+          <label for="contribution"><strong>Add Contribution (Rp):</strong></label><br />
+          <input type="text" id="contribution" placeholder="Contoh: 500.000" required />
+          <button onclick="addContribution()">Add Contribution</button>
+        </div>
+      </div>
+    </div>
+    <!-- History -->
+    <div id="history-tab" class="tab-content">
+      <div class="history-container">
+        <h3>Savings History</h3>
+        <div id="history"></div>
       </div>
     </div>
   </div>
-  
+  <script>
+    // Simple tab switcher
+    function switchTab(tabId) {
+      const allTabs = document.querySelectorAll('.tab-content');
+      const allButtons = document.querySelectorAll('.tab-button');
+      allTabs.forEach(tab => tab.classList.remove('active'));
+      allButtons.forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+      // Call showHistory() if the selected tab is History
+      if (tabId === "history-tab") {
+        showHistory();
+      }
+    }
+  </script>
   <script src="target.js"></script>
 </body>
 </html>
