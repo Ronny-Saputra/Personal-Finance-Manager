@@ -16,6 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
     "Transportations"
   ];
 
+  // Color mapping for categories
+  const categoryColors = {
+    "Food & Drinks": "#e74c3c", // Red
+    "Groceries": "#f1c40f",     // Yellow
+    "Entertainment": "#3498db", // Blue
+    "Living Expenses": "#9b59b6", // Purple
+    "Payments": "#2ecc71",      // Green
+    "Transportations": "#e67e22" // Orange
+  };
+
   let chart = null;
 
   function render(month) {
@@ -42,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const labels = Object.keys(monthData.expenses);
     const values = labels.map(cat => monthData.expenses[cat]);
 
+    // Assign colors based on category
+    const backgroundColors = labels.map(cat => categoryColors[cat] || "#ccc"); // Default to gray if no color is defined
+
     // Draw Chart
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
@@ -51,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: `${month}`,
           data: values,
-          backgroundColor: "#2ecc71"
+          backgroundColor: backgroundColors // Use custom colors here
         }]
       },
       options: {
