@@ -81,13 +81,18 @@
         </div>
       </div>
     </div>
-    <!-- History -->
-    <div id="history-tab" class="tab-content">
-      <div class="history-container">
-        <h3>Savings History</h3>
-        <div id="history"></div>
-      </div>
+<!-- History -->
+<div id="history-tab" class="tab-content">
+  <div class="history-container">
+    <!-- Wrapper untuk Judul dan Tombol -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0;">Savings History</h3>
+      <!-- Tombol Clear History -->
+      <button onclick="clearHistory()" class="clear-history-button">Clear History</button>
     </div>
+    <div id="history"></div>
+  </div>
+</div>
   </div>
   <script>
     // Simple tab switcher
