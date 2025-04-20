@@ -167,3 +167,22 @@ button:hover {
   border-radius: 4px;
   width: 200px; /* Adjust width of the dropdown */
 }
+
+/* Styling untuk tombol Clear History */
+.clear-history-button {
+  padding: 6px 12px; /* Padding lebih kecil untuk tombol yang lebih pendek */
+  font-size: 14px;
+  background-color: #666;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  max-width: 130px; /* Batasi lebar maksimum tombol */
+  white-space: nowrap; /* Pastikan teks tidak membungkus */
+  text-overflow: ellipsis; /* Tambahkan elipsis jika teks terlalu panjang */
+  overflow: hidden; /* Sembunyikan teks yang melebihi batas */
+}
+
+.clear-history-button:hover {
+  background-color: #444;
+}
