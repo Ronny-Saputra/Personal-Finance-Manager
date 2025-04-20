@@ -28,8 +28,13 @@ function calculateSavings() {
   const income = parseFloat(incomeInput);
   const percentage = parseFloat(document.getElementById("percentage").value);
 
-  if (isNaN(income) || isNaN(percentage)) {
-    alert("Please enter valid income and percentage.");
+  if (isNaN(income) || income <= 0) {
+    alert("Please enter a valid positive income.");
+    return;
+  }
+
+  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+    alert("Please enter a valid percentage between 0 and 100.");
     return;
   }
 
@@ -58,8 +63,13 @@ function saveSavings() {
   const income = parseFloat(rawIncome.replace(/\./g, ''));
   const percentage = parseFloat(document.getElementById("percentage").value);
 
-  if (isNaN(income) || isNaN(percentage)) {
-    alert("Please enter valid income and percentage.");
+  if (isNaN(income) || income <= 0) {
+    alert("Please enter a valid positive income.");
+    return;
+  }
+
+  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+    alert("Please enter a valid percentage between 0 and 100.");
     return;
   }
 
@@ -144,6 +154,15 @@ function addContribution() {
 
   // Clear input field
   document.getElementById("contribution").value = "";
+}
+
+// Clear all savings history
+function clearHistory() {
+  if (confirm("Are you sure you want to clear all savings history?")) {
+    localStorage.removeItem("savingsData"); // Hapus data dari localStorage
+    showHistory(); // Refresh tampilan history
+    alert("Savings history cleared!");
+  }
 }
 
 // Load history on page load
