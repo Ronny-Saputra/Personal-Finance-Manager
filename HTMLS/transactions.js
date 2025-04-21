@@ -1,3 +1,5 @@
+let selectedCategory = "all";
+
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("transaction-data");
   const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
@@ -14,24 +16,31 @@ document.addEventListener("DOMContentLoaded", () => {
       grouped[month][day].push({ ...t, dateObj });
     }
   });
-
   function renderTransactions(monthFilter) {
     container.innerHTML = "";
-
+  
     if (!grouped[monthFilter]) {
       container.innerHTML = `<div style="text-align: center; margin-top: 20px;">No transactions for ${monthFilter}</div>`;
       return;
     }
-
+  
     container.innerHTML += `<h3 style="font-size: 20px; font-weight: bold; margin: 20px 0 10px;">${monthFilter}</h3>`;
-
+  
     const days = grouped[monthFilter];
     const sortedDays = Object.keys(days).sort((a, b) => parseInt(a) - parseInt(b));
-
+  
     sortedDays.forEach(day => {
       const items = days[day];
-      const totalForDay = items.reduce((sum, item) => sum + item.amount, 0);
-
+  
+      // Apply filter
+      const filteredItems = selectedCategory === "all"
+        ? items
+        : items.filter(t => t.category === selectedCategory);
+  
+      if (filteredItems.length === 0) return; // skip if no match
+  
+      const totalForDay = filteredItems.reduce((sum, item) => sum + item.amount, 0);
+  
       container.innerHTML += `
         <div class="day-header" style="
           background-color: #cfe8ff;
@@ -47,15 +56,15 @@ document.addEventListener("DOMContentLoaded", () => {
           <span>Day ${day}</span>
           <span>Total: Rp ${totalForDay.toLocaleString()}</span>
         </div>`;
-
-      items.forEach(t => {
+  
+      filteredItems.forEach(t => {
         const fullDate = t.dateObj.toLocaleDateString("en-GB", {
           year: "numeric", month: "long", day: "numeric"
         });
         const time = t.dateObj.toLocaleTimeString("en-GB", {
           hour: "2-digit", minute: "2-digit"
         });
-
+  
         container.innerHTML += `
           <div style="
             display: flex;
@@ -77,8 +86,27 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+  
 
   const durationSelect = document.getElementById("duration-select");
+  const categoryFilter = document.getElementById("category-filter");
+
+  if (categoryFilter) {
+    categoryFilter.addEventListener("change", () => {
+      selectedCategory = categoryFilter.value;
+      renderTransactions(durationSelect.value);
+    });
+  }
+
+  const searchInput = document.querySelector(".search-box input");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      filterText = searchInput.value.trim();
+      renderTransactions(durationSelect.value);
+    });
+  }
+
   const durationDisplay = document.getElementById("duration-display");
 
   if (durationSelect && durationDisplay) {

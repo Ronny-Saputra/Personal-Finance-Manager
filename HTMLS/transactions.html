@@ -24,10 +24,19 @@
 
   <div class="content-wrapper">
     <div class="top-bar">
-      <div class="search-box">
-        <img src="Logos/search_logo.png" alt="Search Icon" />
-        <input type="text" placeholder="Search..." />
+      <div class="duration-box">
+        <label class="duration-label" for="category-filter">Filter by Category</label>
+        <select id="category-filter" class="duration-select">
+          <option value="all">All Categories</option>
+          <option value="Food & Drinks">Food & Drinks</option>
+          <option value="Living Expenses">Living Expenses</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Payments">Payments</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Transportations">Transportations</option>
+        </select>
       </div>
+      
       <div class="duration-box">
         <label class="duration-label" for="duration-select">Duration</label>
         <select id="duration-select" class="duration-select">
