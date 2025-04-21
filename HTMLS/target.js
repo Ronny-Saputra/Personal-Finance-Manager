@@ -67,7 +67,6 @@ function saveSavings() {
     alert("Please enter a valid positive income.");
     return;
   }
-
   if (isNaN(percentage) || percentage < 0 || percentage > 100) {
     alert("Please enter a valid percentage between 0 and 100.");
     return;
@@ -88,15 +87,8 @@ function saveSavings() {
   // Retrieve existing savings data from localStorage
   let savingsHistory = JSON.parse(localStorage.getItem("savingsData")) || [];
 
-  // Check if an entry for the selected month already exists
-  const existingEntryIndex = savingsHistory.findIndex(item => item.month === selectedMonth);
-  if (existingEntryIndex !== -1) {
-    // Update the existing entry
-    savingsHistory[existingEntryIndex] = savingsData;
-  } else {
-    // Add a new entry
-    savingsHistory.push(savingsData);
-  }
+  // Always add a new entry without replacing the old one
+  savingsHistory.push(savingsData);
 
   // Save updated data back to localStorage
   localStorage.setItem("savingsData", JSON.stringify(savingsHistory));
@@ -108,7 +100,6 @@ function saveSavings() {
 function showHistory() {
   const history = JSON.parse(localStorage.getItem("savingsData")) || [];
   console.log("Data loaded from localStorage:", history); // Debugging log
-
   const historyDiv = document.getElementById("history");
   historyDiv.innerHTML = "";
 
@@ -117,10 +108,18 @@ function showHistory() {
     return;
   }
 
-  history.forEach(entry => {
+  history.forEach((entry, index) => {
     const div = document.createElement("div");
-    div.innerText =
-      `Month: ${entry.month} | Date: ${new Date(entry.createdAt).toLocaleDateString("id-ID")} | Amount: Rp ${entry.monthlyIncome.toLocaleString("id-ID")} | Percentage: ${entry.savingsPercentage}% | Savings Goal: Rp ${entry.targetAmount.toLocaleString("id-ID")} | Contributions: Rp ${entry.recommendedSavings.toLocaleString("id-ID")}`;
+    div.style.marginBottom = "10px"; // Add spacing between entries
+    div.innerHTML = `
+      <strong>Log #${index + 1}:</strong><br>
+      Month: ${entry.month} | 
+      Date: ${new Date(entry.createdAt).toLocaleDateString("id-ID")} | 
+      Income: Rp ${entry.monthlyIncome.toLocaleString("id-ID")} | 
+      Percentage: ${entry.savingsPercentage}% | 
+      Savings Goal: Rp ${entry.targetAmount.toLocaleString("id-ID")} | 
+      Contributions: Rp ${entry.recommendedSavings.toLocaleString("id-ID")}
+    `;
     historyDiv.appendChild(div);
   });
 }
