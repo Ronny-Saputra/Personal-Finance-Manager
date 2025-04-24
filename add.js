@@ -4,14 +4,14 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 
 // Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
-  authDomain: "nextgrowthgroup.firebaseapp.com",
-  databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
-  projectId: "nextgrowthgroup",
-  storageBucket: "nextgrowthgroup.firebasestorage.app",
-  messagingSenderId: "658734405364",
-  appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
-  measurementId: "G-Y5DB2XL0TH"
+  apiKey: rahasiaperusahan,
+  authDomain: rahasiaperusahan,
+  databaseURL: rahasiaperusahan,
+  projectId: rahasiaperusahan,
+  storageBucket: rahasiaperusahan,
+  messagingSenderId: rahasiaperusahan,
+  appId: rahasiaperusahan,
+  measurementId: rahasiaperusahan,
 };
 
 // Initialize Firebase
