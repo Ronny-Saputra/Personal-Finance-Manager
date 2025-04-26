@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Income & Expenses</title>
+    <link rel="stylesheet" href="../css/add.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="welcome-message">Welcome, </div>
+        <div class="sidebar-menu">
+          <a href="../html/dashboard.html" class="menu-item">
+            <img src="../logos/dashboard_logo.png" alt="Dashboard" />
+            <span>Dashboard</span>
+          </a>
+          <a href="../html/income.html" class="menu-item">
+            <img src="../logos/expenses_logo.png" alt="Expenses" />
+            <span>Expenses and Income</span>
+          </a>
+          <a href="../html/transactions.html" class="menu-item">
+            <img src="../logos/transactions_logo.png" alt="Transactions" />
+            <span>Transactions</span>
+          </a>
+          <a href="../html/reportss.html" class="menu-item">
+            <img src="../logos/reports_logo.png" alt="Reports" />
+            <span>Monthly Reports</span>
+          </a>
+          <a href="../html/target.html" class="menu-item">
+            <img src="../logos/monthly_logo.png" alt="Savings" />
+            <span>Monthly Savings Target</span>
+          </a>
+          <a href="../html/add.html" class="menu-item active">
+            <img src="../logos/adding_logo.png" alt="Add Income and Expenses" />
+            <span>Add Income and Expenses</span>
+          </a>
+        </div>
+        <div class="sidebar-footer">
+          <a href="../html/login.html" class="menu-item"> 
+            <img src="../logos/logout_logo.png" alt="Logout" />
+            <span>Logout</span>
+            </a>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <main class="main">
+        <div class="form-wrapper">
+          <h2>Add Income & Expenses</h2>
+          <div class="form-section">
+            <label for="amount">Enter Amount:</label>
+            <input type="number" id="amount" class="input yellow" placeholder="Rp." />
+          </div>
+          <div class="form-section">
+            <button class="toggle-btn income" onclick="selectType('income')">Income</button>
+            <button class="toggle-btn expense" onclick="selectType('expense')">Expense</button>
+          </div>
+          <div class="form-section">
+            <label>Category:</label>
+            <div class="category-grid">
+              <button onclick="selectCategory(this)">Food & Drinks</button>
+              <button onclick="selectCategory(this)">Living Expenses</button>
+              <button onclick="selectCategory(this)">Groceries</button>
+              <button onclick="selectCategory(this)">Payments</button>
+              <button onclick="selectCategory(this)">Entertainment</button>
+              <button onclick="selectCategory(this)">Transportations</button>
+            </div>
+          </div>
+          <div class="form-section">
+            <label>Date & Time:</label>
+            <input type="date" id="date" class="input blue" />
+            <input type="time" id="time" class="input blue" />
+          </div>
+          <div class="form-section">
+            <button class="submit confirm" onclick="submitForm()">Confirm</button>
+            <button class="submit cancel" onclick="cancelForm()">Cancel</button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="../js/firebase.js"></script> 
+    <script src="../js/autolongout.js"></script> 
+    <script type="module" src="../js/add.js"></script>
+  </body>
+</html>
