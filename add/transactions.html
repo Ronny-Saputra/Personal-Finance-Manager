@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transactions</title>
+  <link rel="stylesheet" href="transactions.css" />
+</head>
+<body>
+  <div class="sidebar">
+     <div class="welcome-message">Welcome, <span id="username-display">User</span></div>
+    <div class="sidebar-menu">
+      <a href="dashboard.html" class="menu-item"><img src="gambar/dashboard_logo.png" alt="Dashboard"><span>Dashboard</span></a>
+      <a href="income.html" class="menu-item"><img src="gambar/expenses_logo.png" alt="Expenses"><span>Expenses and Income</span></a>
+      <a href="transactions.html" class="menu-item active"><img src="gambar/transactions_logo.png" alt="Transactions"><span>Transactions</span></a>
+      <a href="reportss.html" class="menu-item"><img src="gambar/reports_logo.png" alt="Reports"><span>Monthly Reports</span></a>
+      <a href="target.html" class="menu-item"><img src="gambar/monthly_logo.png" alt="Savings"><span>Monthly Savings Target</span></a>
+      <a href="add.html" class="menu-item"><img src="gambar/adding_logo.png" alt="Add Income and Expenses"><span>Add Income and Expenses</span></a>
+    </div>
+
+  <div class="sidebar-footer">
+
+    <a href="login.html" class="menu-item"> 
+
+      <img src="../gambar/logout_logo.png" alt="Logout">
+
+      <span>Logout</span>
+
+    </a>
+    </div>
+</div>
+
+  <div class="content-wrapper">
+    <div class="top-bar">
+      <div class="search-box">
+        <img src="gambar/search_logo.png" alt="Search Icon" />
+        <input type="text" placeholder="Search..." />
+      </div>
+      <div class="duration-box">
+        <label class="duration-label" for="duration-select">Duration</label>
+        <select id="duration-select" class="duration-select">
+          <option>January</option>
+          <option>February</option>
+          <option>March</option>
+          <option>April</option>
+          <option>May</option>
+          <option>June</option>
+          <option>July</option>
+          <option>August</option>
+          <option>September</option>
+          <option>October</option>
+          <option>November</option>
+          <option>December</option>
+        </select>
+        
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="section-title" id="duration-display">January</div>
+      <div class="transactions-container" id="transaction-data">
+        <!-- Transactions will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Reset Button -->
+
+  <script src="firebase.js"></script> 
+  <script src="autologout.js"></script> 
+  <script src="transactions.js"></script>
+</body>
+</html>

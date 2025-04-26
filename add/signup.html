@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-side"></div>
+        <div class="right-side">
+            <div class="signup-box">
+                <h2>Sign Up!</h2>
+                <p>Start Managing Your Finances Today!</p>
+                
+                <label for="name">Full Name</label>
+                <input type="text" placeholder="Enter Your Full Name" id="name">
+                
+                <label for="email">Email</label>
+                <input type="email" placeholder="Enter Your Email" id="email">
+                
+                <label for="password">Password</label>
+                <input type="password" placeholder="Enter Your Password" id="password">
+                <div id="password-strength" style="margin-top: 5px; font-size: 12px; color: grey;"></div>
+                
+                <button onclick="signUp()">Sign Up</button>
+                
+                <p>Or Sign Up With</p>
+                
+                <div class="google-signup-container">
+                    <div class="google-signup" onclick="signUpWithGoogle()"></div>
+                </div>
+                
+                <div class="login">
+                    Already Have an Account? <a onclick="goToLogin()">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+            authDomain: "nextgrowthgroup.firebaseapp.com",
+            databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
+            projectId: "nextgrowthgroup",
+            storageBucket: "nextgrowthgroup.firebasestorage.app",
+            messagingSenderId: "658734405364",
+            appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+            measurementId: "G-Y5DB2XL0TH"
+          };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Function: Sign Up with Email & Password
+        window.signUp = async () => {
+            let name = document.getElementById('name').value;
+            let email = document.getElementById('email').value;
+            let password = document.getElementById('password').value;
+
+            if (name === "" || email === "" || password === "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            try {
+                // Create user with email and password
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Update displayName (full name)
+                await updateProfile(user, {
+                    displayName: name
+                });
+
+                console.log("User registered:", user);
+                alert("Sign Up Successful! Welcome, " + name);
+
+                // Redirect to dashboard.html
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error during sign up:", error);
+                alert("Sign Up Failed: " + error.message);
+            }
+        };
+
+        // Function: Sign Up with Google
+        window.signUpWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("User signed up with Google:", result.user);
+                alert("Sign Up Successful! Welcome, " + result.user.displayName);
+
+                // Redirect to dashboard.html
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error("Error signing up with Google:", error);
+                alert("Google Sign Up Failed: " + error.message);
+            }
+        };
+
+        // Redirect to Login Page
+        window.goToLogin = () => {
+            window.location.href = 'login.html';
+        };
+    </script>
+</body>
+</html>
