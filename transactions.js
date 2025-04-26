@@ -2,16 +2,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Firebase Config
+// Konfigurasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
-  authDomain: "nextgrowthgroup.firebaseapp.com",
-  databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
-  projectId: "nextgrowthgroup",
-  storageBucket: "nextgrowthgroup.appspot.com",
-  messagingSenderId: "658734405364",
-  appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
-  measurementId: "G-Y5DB2XL0TH"
+  apiKey: "RAHASIA PERUSAHAN",
+  authDomain: "RAHASIA PERUSAHAN",
+  projectId: "RAHASIA PERUSAHAN",
+  storageBucket: "RAHASIA PERUSAHAN",
+  messagingSenderId: "RAHASIA PERUSAHAN",
+  appId: "RAHASIA PERUSAHAN",
+  measurementId:"RAHASIA PERUSAHAN",
 };
 
 // Initialize Firebase
