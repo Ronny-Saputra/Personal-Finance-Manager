@@ -8,14 +8,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 // Konfigurasi Firebase
+// Konfigurasi Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyB6I6Luc08ytl_JSOEchPPwdx5sNCs5z14",
-  authDomain: "kelompok-ppl.firebaseapp.com",
-  projectId: "kelompok-ppl",
-  storageBucket: "kelompok-ppl.appspot.com",
-  messagingSenderId: "289760692867",
-  appId: "1:289760692867:web:4dac42e878f0c76e91a9b6",
-  measurementId: "G-07E40KCDYH"
+  apiKey: "RAHASIA PERUSAHAN",
+  authDomain: "RAHASIA PERUSAHAN",
+  projectId: "RAHASIA PERUSAHAN",
+  storageBucket: "RAHASIA PERUSAHAN",
+  messagingSenderId: "RAHASIA PERUSAHAN",
+  appId: "RAHASIA PERUSAHAN",
+  measurementId:"RAHASIA PERUSAHAN",
 };
 
 // Inisialisasi Firebase
