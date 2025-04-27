@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monthly Reports</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+  <div class="sidebar">
+  
+    <div class="welcome-message">Welcome, Darren</div>
+
+    <div class="sidebar-menu">
+      <a href="../html/dashboard.html" class="menu-item"> 
+        <img src="../Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+    
+      <a href="../html/income.html" class="menu-item"> 
+        <img src="../Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+    
+      <a href="../html/transactions.html" class="menu-item"> 
+        <img src="../Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+    
+      <a href="../html/reportss.html" class="menu-item active"> 
+        <img src="../Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+    
+      <a href="../html/target.html" class="menu-item"> 
+        <img src="../Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+    
+      <a href="../html/add.html" class="menu-item"> 
+        <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+
+
+    <div class="sidebar-footer">
+      <a href="../html/login.html" class="menu-item" id="logout-button">
+        <img src="../Logos/logout_logo.png" alt="Logout" />
+        <span>Logout</span>
+      </a>
+    </div>
+    </div>
+  </div>
+
+
+
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Monthly Expense Overview</h2>
+      <select id="month-select" style="padding: 8px; font-size: 16px; margin-top: 10px;">
+        <option>January</option><option>February</option><option>March</option><option>April</option>
+        <option>May</option><option>June</option><option>July</option><option>August</option>
+        <option>September</option><option>October</option><option>November</option><option>December</option>
+      </select>
+    </div>
+
+
+    <!-- Centered Chart -->
+    <div style="
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    ">
+      <div style="width: 70%; max-width: 800px;">
+        <canvas id="monthlyExpenseChart"></canvas>
+      </div>
+    </div>
+<!-- Expense Breakdown Table -->
+<div class="data-card" style="margin-top: 30px;">
+  <h3>Expense Breakdown</h3>
+  <!-- Total Income Display -->
+  <div id="total-income-display" style="font-size: 16px; margin-bottom: 10px;">
+    <strong>Total Income: Rp <span id="total-income-value">0</span></strong>
+  </div>
+  <table class="data-table" id="report-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Expense</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Populated by JS -->
+    </tbody>
+  </table>
+  <!-- Cashflow Row -->
+  <div style="margin-top: 15px; font-size: 16px;">
+    <strong>Cashflow:</strong> Rp <span id="cashflow-value">0</span>
+  </div>
+</div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/reportss.js"></script>
+</body>
+</html>

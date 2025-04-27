@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transactions</title>
+  <link rel="stylesheet" href="../css/transactions.css" />
+</head>
+<body>
+  <div class="sidebar">
+  
+    <div class="welcome-message">Welcome, Darren</div>
+
+    <div class="sidebar-menu">
+      <a href="../html/dashboard.html" class="menu-item"> 
+        <img src="../Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+    
+      <a href="../html/income.html" class="menu-item"> 
+        <img src="../Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+    
+      <a href="../html/transactions.html" class="menu-item active"> 
+        <img src="../Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+    
+      <a href="../html/reportss.html" class="menu-item"> 
+        <img src="../Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+    
+      <a href="../html/target.html" class="menu-item"> 
+        <img src="../Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+    
+      <a href="../html/add.html" class="menu-item"> 
+        <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <a href="../html/login.html" class="menu-item" id="logout-button">
+        <img src="../Logos/logout_logo.png" alt="Logout" />
+        <span>Logout</span>
+      </a>
+    </div>
+    
+
+  <div class="content-wrapper">
+    <div class="top-bar">
+      <div class="duration-box">
+        <label class="duration-label" for="category-filter">Filter by Category</label>
+        <select id="category-filter" class="duration-select">
+          <option value="all">All Categories</option>
+          <option value="Food & Drinks">Food & Drinks</option>
+          <option value="Living Expenses">Living Expenses</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Payments">Payments</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Transportations">Transportations</option>
+        </select>
+      </div>
+      
+      <div class="duration-box">
+        <label class="duration-label" for="duration-select">Duration</label>
+        <select id="duration-select" class="duration-select">
+          <option>January</option>
+          <option>February</option>
+          <option>March</option>
+          <option>April</option>
+          <option>May</option>
+          <option>June</option>
+          <option>July</option>
+          <option>August</option>
+          <option>September</option>
+          <option>October</option>
+          <option>November</option>
+          <option>December</option>
+        </select>
+        
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="section-title" id="duration-display">January</div>
+      <div class="transactions-container" id="transaction-data">
+        <!-- Transactions will appear here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Reset Button -->
+
+
+  <script src="../js/transactions.js"></script>
+</body>
+</html>
