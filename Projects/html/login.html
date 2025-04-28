@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-side"></div>
+        <div class="right-side">
+            <div class="login-box" id="loginForm">
+                <h2>Login!</h2>
+                <p>Take Control of Your Finances Effortlessly!</p>
+               
+                <!-- Email Input -->
+                <label for="email">Email</label>
+                <input type="email" placeholder="Enter Your Email" id="email">
+               
+                <!-- Password Input -->
+                <label for="password">Password</label>
+                <input type="password" placeholder="Enter Your Password" id="password">
+               
+                <!-- Forgot Password Link -->
+                <div class="forgot-password">
+                    <a href="#" onclick="event.preventDefault(); forgotPassword();">Forgot Password?</a>
+                </div>
+               
+                <!-- Submit Button -->
+                <button id="submitButton" onclick="login()">Submit</button>
+               
+                <!-- Or Login With Google -->
+                <p>Or Login With</p>
+                <div class="google-login-container">
+                    <div class="google-login" onclick="signInWithGoogle()"></div>
+                </div>
+               
+                <!-- Sign Up Link -->
+                <div class="signup">
+                    Don’t Have an Account Yet? <a onclick="goToSignUp()">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/login.js"></script>
+</body>
+</html>

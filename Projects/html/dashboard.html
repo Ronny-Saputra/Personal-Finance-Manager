@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personal Finance Manager - Dashboard</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="welcome-message">Welcome, </div>
+    <div class="sidebar-menu">
+      <a href="../html/dashboard.html" class="menu-item active">
+        <img src="../Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+      <a href="../html/income.html" class="menu-item">
+        <img src="../Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+      <a href="../html/transactions.html" class="menu-item">
+        <img src="../Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+      <a href="../html/reportss.html" class="menu-item">
+        <img src="../Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+      <a href="../html/target.html" class="menu-item">
+        <img src="../Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+      <a href="../html/add.html" class="menu-item">
+        <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
+        <span>Add Income and Expenses</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <a href="../html/login.html" class="menu-item"> 
+        <img src="../Logos/logout_logo.png" alt="Logout">
+        <span>Logout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="welcome-header">
+      <h2>Dashboard Overview</h2>
+    </div>
+    <!-- Graphs Side-by-Side -->
+    <div class="graph-row">
+      <div class="graph-container">
+        <canvas id="incomeChart"></canvas>
+      </div>
+      <div class="graph-container">
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </div>
+    <!-- Top Two Summary Cards -->
+    <div class="data-section">
+      <div class="data-card">
+        <h3>Income Summary</h3>
+        <table class="data-table" id="income-summary">
+          <tr><th>Month</th><th>Amount</th></tr>
+        </table>
+      </div>
+      <div class="data-card">
+        <h3>Expense Percentage</h3>
+        <table class="data-table" id="expense-percentage">
+          <tr><th>Category</th><th>Percentage</th></tr>
+        </table>
+      </div>
+    </div>
+    <!-- Full Width Savings Table -->
+    <div class="data-card" style="margin-top: 30px;">
+      <h3>Saved Savings Plans</h3>
+      <table class="data-table" id="savings-list">
+        <tr>
+          <th>Month</th>
+          <th>Target</th>
+          <th>Income</th>
+          <th>Saved</th>
+          <th>Percent</th>
+          <th>Date</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../js/firebase.js"></script> 
+  <script src="../js/autolongout.js"></script> 
+  <script type="module" src="../js/dashboard.js"></script>
+</body>
+</html>
