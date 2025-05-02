@@ -8,27 +8,62 @@
 </head>
 <body>
   <div class="sidebar">
+
     <div class="welcome-message">Welcome, </div>
+
     <div class="sidebar-menu">
-      <a href="../html/dashboard.html" class="menu-item"><img src="../Logos/dashboard_logo.png" alt="Dashboard"><span>Dashboard</span></a>
-      <a href="../html/income.html" class="menu-item"><img src="../Logos/expenses_logo.png" alt="Expenses"><span>Expenses and Income</span></a>
-      <a href="../html/transactions.html" class="menu-item active"><img src="../Logos/transactions_logo.png" alt="Transactions"><span>Transactions</span></a>
-      <a href="../html/reportss.html" class="menu-item"><img src="../Logos/reports_logo.png" alt="Reports"><span>Monthly Reports</span></a>
-      <a href="../html/target.html" class="menu-item"><img src="../Logos/monthly_logo.png" alt="Savings"><span>Monthly Savings Target</span></a>
-      <a href="../html/add.html" class="menu-item"><img src="../Logos/adding_logo.png" alt="Add Income and Expenses"><span>Add Income and Expenses</span></a>
+      <a href="../html/dashboard.html" class="menu-item">
+        <img src="../Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+
+      <a href="../html/income.html" class="menu-item">
+        <img src="../Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+
+      <a href="../html/transactions.html" class="menu-item active">
+        <img src="../Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+
+      <a href="../html/reportss.html" class="menu-item">
+        <img src="../Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+      
+      <a href="../html/target.html" class="menu-item">
+        <img src="../Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+
+      <a href="../html/add.html" class="menu-item">
+        <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
+        <span>Add Income and Expenses</span>
+      </a>
     </div>
-    <a href="../html/login.html" class="menu-item"> 
-      <div class="menu-item" id="logout-button"><img src="../Logos/logout_logo.png" alt="Logout" /><span>Logout</span></div>
-    </a>
+    <div class="sidebar-footer">
+      <a href="../html/login.html" class="menu-item"> 
+      <img src="../Logos/logout_logo.png" alt="Logout" /><span>Logout</span></div>
+      </a>
     </div>
   </div>
 
   <div class="content-wrapper">
     <div class="top-bar">
-      <div class="search-box">
-        <img src="../Logos/search_logo.png" alt="Search Icon" />
-        <input type="text" placeholder="Search..." />
+      <div class="duration-box">
+        <label class="duration-label" for="category-filter">Filter by Category</label>
+        <select id="category-filter" class="duration-select">
+          <option value="all">All Categories</option>
+          <option value="Food & Drinks">Food & Drinks</option>
+          <option value="Living Expenses">Living Expenses</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Payments">Payments</option>
+          <option value="Entertainment">Entertainment</option>
+          <option value="Transportations">Transportations</option>
+        </select>
       </div>
+
       <div class="duration-box">
         <label class="duration-label" for="duration-select">Duration</label>
         <select id="duration-select" class="duration-select">
@@ -59,5 +94,11 @@
   <script src="../js/firebase.js"></script> 
   <script src="../js/autolongout.js"></script> 
   <script type="module" src="../js/transactions.js"></script>
+
+  <dialog id="notify-dialog">
+    <p id="notify-message"></p>
+    <button id="notify-ok">OK</button>
+  </dialog>
+
 </body>
 </html>

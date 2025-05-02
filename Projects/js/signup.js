@@ -21,6 +21,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
+});
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
 // Function: Sign Up with Email & Password
 window.signUp = async () => {
     let name = document.getElementById('name').value;
@@ -28,7 +41,7 @@ window.signUp = async () => {
     let password = document.getElementById('password').value;
 
     if (name === "" || email === "" || password === "") {
-        alert("Please fill in all fields!");
+        showPopup("Please fill in all fields!");
         return;
     }
 
@@ -49,13 +62,13 @@ window.signUp = async () => {
         });
 
         console.log("User registered:", user);
-        alert("Sign Up Successful! Welcome, " + name);
+        showPopup("Sign Up Successful! Welcome, " + name);
 
         // Redirect to dashboard.html
         window.location.href = 'dashboard.html';
     } catch (error) {
         console.error("Error during sign up:", error);
-        alert("Sign Up Failed: " + error.message);
+        showPopup("Sign Up Failed: " + error.message);
     }
 };
 
@@ -64,13 +77,13 @@ window.signUpWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, provider);
         console.log("User signed up with Google:", result.user);
-        alert("Sign Up Successful! Welcome, " + result.user.displayName);
+        showPopup("Sign Up Successful! Welcome, " + result.user.displayName);
 
         // Redirect to dashboard.html
         window.location.href = 'dashboard.html';
     } catch (error) {
         console.error("Error signing up with Google:", error);
-        alert("Google Sign Up Failed: " + error.message);
+        showPopup("Google Sign Up Failed: " + error.message);
     }
 };
 

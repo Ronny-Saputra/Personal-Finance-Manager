@@ -19,18 +19,31 @@
  const auth = getAuth(app);
  const provider = new GoogleAuthProvider();
 
+ const notifyDialog    = document.getElementById('notify-dialog');
+ const notifyMessage   = document.getElementById('notify-message');
+ const notifyOkButton  = document.getElementById('notify-ok');
+
+ notifyOkButton.addEventListener('click', () => {
+   notifyDialog.close();
+ });
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
  // Google Login Function
  window.signInWithGoogle = async () => {
      try {
          const result = await signInWithPopup(auth, provider);
          console.log("User berhasil login:", result.user);
-         alert("Login Berhasil! Selamat datang, " + result.user.displayName);
+         showPopup("Login Berhasil! Selamat datang, " + result.user.displayName);
 
          // Redirect ke dashboard.html
          window.location.replace('dashboard.html');
      } catch (error) {
          console.error("Error saat login:", error);
-         alert("Login gagal! " + error.message);
+         showPopup("Login gagal! " + error.message);
      }
  };
 
@@ -43,7 +56,7 @@
 
      // Validasi input
      if (!email || !password) {
-         alert("Email dan password harus diisi!");
+         showPopup("Email dan password harus diisi!");
          return;
      }
 
@@ -53,13 +66,13 @@
 
      try {
          await signInWithEmailAndPassword(auth, email, password);
-         alert("Login berhasil!");
+         showPopup("Login berhasil!");
 
          // Redirect ke dashboard.html
          window.location.replace('dashboard.html');
      } catch (error) {
          if (error.code === "auth/wrong-password") {
-             alert("Password salah!");
+             showPopup("Password salah!");
 
              // Feedback visual: Ubah warna input jadi merah
              const passwordInput = document.getElementById('password');
@@ -84,9 +97,9 @@
              loginForm.classList.add("shake");
              setTimeout(() => loginForm.classList.remove("shake"), 500);
          } else if (error.code === "auth/user-not-found") {
-             alert("User tidak ditemukan! Silakan daftar terlebih dahulu.");
+             showPopup("User tidak ditemukan! Silakan daftar terlebih dahulu.");
          } else {
-             alert("Login gagal! " + error.message);
+             showPopup("Login gagal! " + error.message);
          }
      } finally {
          // Kembalikan tombol ke state awal
@@ -101,10 +114,10 @@
      if (email) {
          try {
              await sendPasswordResetEmail(auth, email);
-             alert("Link reset password sudah dikirim ke email kamu!");
+             showPopup("Link reset password sudah dikirim ke email kamu!");
          } catch (error) {
              console.error("Gagal mengirim link reset password:", error.message);
-             alert("Gagal mengirim link reset password: " + error.message);
+             showPopup("Gagal mengirim link reset password: " + error.message);
          }
      }
  };

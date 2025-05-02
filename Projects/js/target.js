@@ -47,6 +47,18 @@ const breakdownEl    = document.getElementById("breakdown");
 const allocationEl   = document.getElementById("allocation");
 const contributionEl = document.getElementById("contribution");
 const historyEl      = document.getElementById("history");
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
+});
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
 
 // ——— Input formatting ———
 [incomeEl, contributionEl].forEach(el =>
@@ -62,8 +74,8 @@ const historyEl      = document.getElementById("history");
 window.calculateSavings = () => {
   const inc = parseFloat(incomeEl.value.replace(/\./g,""));
   const pct = parseFloat(percentageEl.value);
-  if (isNaN(inc)||inc<=0) { alert("Income invalid"); return null; }
-  if (isNaN(pct)||pct<0||pct>100) { alert("Percentage invalid"); return null; }
+  if (isNaN(inc)||inc<=0) { showPopup("Income invalid"); return null; }
+  if (isNaN(pct)||pct<0||pct>100) { showPopup("Percentage invalid"); return null; }
   const goal = inc * (pct/100);
   resultEl.textContent    = `Savings Goal: Rp ${goal.toLocaleString("id-ID")}`;
   breakdownEl.textContent = `(${pct}% of Rp ${inc.toLocaleString("id-ID")})`;
@@ -82,10 +94,17 @@ function targetsCol() {
 
 // ——— 2) Save: carry over previous contributions ———
 window.saveSavings = async () => {
-  if (!currentUser) return alert("Please sign in first.");
-  const goal = calculateSavings();
-  if (goal === null) return;
+  
+  const saveBtn = document.querySelector('button[onclick="saveSavings()"]');
+  if (saveBtn.disabled) return;
+  saveBtn.disabled = true; 
 
+  if (!currentUser) return showPopup("Please sign in first.");
+  const goal = calculateSavings();
+  if (goal === null) {
+    saveBtn.disabled = false;
+    return;
+  }
   const month = monthEl.value;
   const base  = targetsCol();
 
@@ -113,20 +132,25 @@ window.saveSavings = async () => {
       createdAt:    Timestamp.now()
     });
     const displayMonth = month.charAt(0).toUpperCase() + month.slice(1);
-    alert(`Successfully Added Saving Target For ${displayMonth}`);
-    incomeEl.value = "";
-    showHistory();
+    showPopup (`Successfully Added Saving Target For ${displayMonth}`);
+      incomeEl.value = "";
+      showHistory();
   } catch (e) {
     console.error("Save failed:", e);
-    alert("Save failed: " + e.message);
+    showPopup("Save failed: " + e.message);
   }
 };
 
 // ——— 3) Add contribution only to latest doc for that month ———
 window.addContribution = async () => {
-  if (!currentUser) return alert("Please sign in first.");
+
+  const addBtn = document.querySelector('button[onclick="addContribution()"]');
+  if (addBtn.disabled) return;
+  addBtn.disabled = true;
+
+  if (!currentUser) return showPopup("Please sign in first.");
   const val = parseFloat(contributionEl.value.replace(/\./g,""));
-  if (isNaN(val)||val<=0) return alert("Contribution invalid.");
+  if (isNaN(val)||val<=0) return showPopup("Contribution invalid.");
 
   const q = query(
     targetsCol(),
@@ -138,7 +162,7 @@ window.addContribution = async () => {
   try {
     const snaps = await getDocs(q);
     if (snaps.empty) {
-      return alert("No target found for this month. Save first.");
+      return showPopup("No target found for this month. Save first.");
     }
     const docSnap = snaps.docs[0];
     const data    = docSnap.data();
@@ -155,12 +179,14 @@ window.addContribution = async () => {
 
     const monthName = monthEl.value;
     const displayMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-    alert(`Successfully Added Contribution For ${displayMonth}`);
+    showPopup(`Successfully Added Contribution For ${displayMonth}`);
     contributionEl.value = "";
     showHistory();
   } catch (e) {
     console.error("Add contribution failed:", e);
-    alert("Add failed: " + e.message);
+    showPopup("Add failed: " + e.message);
+  } finally {
+    addBtn.disabled = false;
   }
 };
 
@@ -213,7 +239,7 @@ window.clearHistory = async () => {
     historyEl.innerHTML = "";
   } catch (e) {
     console.error("Clear failed:", e);
-    alert("Clear failed: " + e.message);
+    showPopup("Clear failed: " + e.message);
   }
 };
 

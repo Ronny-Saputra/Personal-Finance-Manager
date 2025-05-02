@@ -1,12 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
 // ——— Firebase init (your config) ———
 const firebaseConfig = {
@@ -22,7 +16,21 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
+});
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
 let transactions = [];
+let selectedCategory = "all";
 const container = document.getElementById("transaction-data");
 
 // Load and render after auth
@@ -60,6 +68,7 @@ function initTransactions() {
 
   const durationSelect  = document.getElementById("duration-select");
   const durationDisplay = document.getElementById("duration-display");
+  const categoryFilter  = document.getElementById("category-filter");
 
   function renderTransactions(monthFilter) {
     container.innerHTML = "";
@@ -78,8 +87,14 @@ function initTransactions() {
     const sortedDays = Object.keys(days).sort((a,b)=>a-b);
 
     sortedDays.forEach(day => {
-      const items = days[day];
-      const totalForDay = items.reduce((sum, item) => sum + item.amount, 0);
+      const dayItems = days[day];
+      const filteredItems = selectedCategory === "all"
+        ? dayItems
+        : dayItems.filter(t => t.category === selectedCategory);
+
+      if (filteredItems.length === 0) return;
+
+      const totalForDay = filteredItems.reduce((sum, item) => sum + item.amount, 0);
 
       container.innerHTML += `
         <div class="day-header" style="
@@ -96,7 +111,7 @@ function initTransactions() {
           <span>Total: Rp ${totalForDay.toLocaleString()}</span>
         </div>`;
 
-      items.forEach(t => {
+        filteredItems.forEach(t => {
         const fullDate = t.dateObj.toLocaleDateString("en-GB", {
           year: "numeric", month: "long", day: "numeric"
         });
@@ -136,9 +151,15 @@ function initTransactions() {
     durationDisplay.textContent = m;
     renderTransactions(m);
   });
+
+  if (categoryFilter) {
+    categoryFilter.addEventListener("change", () => {
+      selectedCategory = categoryFilter.value;
+      renderTransactions(durationSelect.value);
+    });
+  }
 }
 
-// Clear helper (deletes all docs instead of localStorage)
 window.clearTransactions = async () => {
   if (!confirm("Clear all transaction data?")) return;
   const user = auth.currentUser;
@@ -146,6 +167,6 @@ window.clearTransactions = async () => {
   const col = collection(db, "Users Transactions", user.uid, "transactions");
   const snaps = await getDocs(col);
   await Promise.all(snaps.docs.map(d => deleteDoc(d.ref)));
-  alert("All data cleared.");
+  showPopup("All data cleared.");
   location.reload();
 };

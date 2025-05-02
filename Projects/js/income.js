@@ -23,6 +23,19 @@ initializeApp(firebaseConfig);
 const auth = getAuth();
 const db   = getFirestore();
 
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
+});
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
 let currentUser;
 
 // Wait for auth, then fetch+render
@@ -129,6 +142,6 @@ window.clearTransactions = async () => {
   if (!confirm("Clear all transaction data?")) return;
   const snaps = await getDocs(collection(db, "Users Transactions", currentUser.uid, "transactions"));
   await Promise.all(snaps.docs.map(d => deleteDoc(d.ref)));
-  alert("All data cleared.");
+  showPopup("All data cleared.");
   location.reload();
 };

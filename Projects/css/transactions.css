@@ -335,3 +335,37 @@ box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-top: 30px;
   font-size: 15px;
 }
+
+#notify-dialog {
+  position: fixed;       
+  top: 50%;              
+  left: 50%;            
+  transform: translate(-50%, -50%); 
+  border: none;
+  border-radius: 8px;
+  padding: 20px 30px;
+  max-width: 320px;
+  width: 80%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  text-align: center;
+  background: white;
+  z-index: 1000;         
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#notify-ok {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#notify-ok:hover {
+  background: #0056b3;
+}

@@ -22,17 +22,40 @@
     <div class="app-title"></div>
     <div class="welcome-message">Welcome, </div>
     <div class="sidebar-menu">
-      <a href="../html/dashboard.html" class="menu-item"><img src="../Logos/dashboard_logo.png" alt="Dashboard"><span>Dashboard</span></a>
-      <a href="../html/income.html" class="menu-item"><img src="../Logos/expenses_logo.png" alt="Expenses"><span>Expenses and Income</span></a>
-      <a href="../html/transactions.html" class="menu-item"><img src="../Logos/transactions_logo.png" alt="Transactions"><span>Transactions</span></a>
-      <a href="../html/reportss.html" class="menu-item"><img src="../Logos/reports_logo.png" alt="Reports"><span>Monthly Reports</span></a>
-      <a href="../html/target.html" class="menu-item active"><img src="../Logos/monthly_logo.png" alt="Savings"><span>Monthly Savings Target</span></a>
-      <a href="../html/add.html" class="menu-item"><img src="../Logos/adding_logo.png" alt="Add Income and Expenses"><span>Add Income and Expenses</span></a>
+      <a href="../html/dashboard.html" class="menu-item">
+        <img src="../Logos/dashboard_logo.png" alt="Dashboard">
+        <span>Dashboard</span>
+      </a>
+      
+      <a href="../html/income.html" class="menu-item">
+        <img src="../Logos/expenses_logo.png" alt="Expenses">
+        <span>Expenses and Income</span>
+      </a>
+      
+      <a href="../html/transactions.html" class="menu-item">
+        <img src="../Logos/transactions_logo.png" alt="Transactions">
+        <span>Transactions</span>
+      </a>
+      
+      <a href="../html/reportss.html" class="menu-item">
+        <img src="../Logos/reports_logo.png" alt="Reports">
+        <span>Monthly Reports</span>
+      </a>
+      
+      <a href="../html/target.html" class="menu-item active">
+        <img src="../Logos/monthly_logo.png" alt="Savings">
+        <span>Monthly Savings Target</span>
+      </a>
+      
+      <a href="../html/add.html" class="menu-item">
+        <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
+        <span>Add Income and Expenses</span>
+      </a>
     </div>
     <div class="sidebar-footer">
       <a href="../html/login.html" class="menu-item"> 
       <img src="../Logos/logout_logo.png" alt="Logout">
-      <span>Logout</span></div>
+      <span>Logout</span>
       </a>
     </div>
   </div>
@@ -115,5 +138,11 @@
   <script src="../js/firebase.js"></script> 
   <script src="../js/autolongout.js"></script> 
   <script type="module" src="../js/target.js"></script>
+
+  <dialog id="notify-dialog">
+    <p id="notify-message"></p>
+    <button id="notify-ok">OK</button>
+  </dialog>
+
 </body>
 </html>

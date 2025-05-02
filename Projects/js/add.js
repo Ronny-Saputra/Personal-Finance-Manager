@@ -19,6 +19,19 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
+});
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
 // 4. Track signed-in user
 let currentUser = null;
 onAuthStateChanged(auth, user => {
@@ -74,18 +87,41 @@ window.selectCategory = (btn) => {
 
 // 8. submitForm → save to Firestore
 window.submitForm = async () => {
+
+  const confirmBtn = document.querySelector('button[onclick="submitForm()"]');
+  if (confirmBtn.disabled) return;
+  confirmBtn.disabled = true;
+
   const amountEl = document.getElementById('amount');
   const dateEl   = document.getElementById('date');
   const timeEl   = document.getElementById('time');
 
   // --- Validation ---
-  if (!currentUser)                      return alert('Please sign in first.');
-  if (!entryType)                        return alert('Select Income or Expense.');
-  if (entryType === 'expense' && !entryCategory)
-                                         return alert('Select a category.');
-  if (!amountEl.value)                   return alert('Enter an amount.');
-  if (!dateEl.value || !timeEl.value)    return alert('Select date and time.');
-
+  if (!currentUser) {
+    showPopup('Please sign in first.');
+    confirmBtn.disabled = false;
+    return;
+  }
+  if (!entryType){
+    showPopup('Select Income or Expense.');
+    confirmBtn.disabled = false;
+    return;
+  }
+  if (entryType === 'expense' && !entryCategory){
+    showPopup('Select a category.');
+    confirmBtn.disabled = false;
+    return;
+  }
+  if (!amountEl.value){
+    showPopup('Enter an amount.');
+    confirmBtn.disabled = false;
+    return;
+  }
+  if (!dateEl.value || !timeEl.value){
+    showPopup('Select date and time.');
+    confirmBtn.disabled = false;
+    return;
+  }
   // --- Build timestamp ---
   const jsDate = new Date(`${dateEl.value}T${timeEl.value}:00`);
   const ts     = Timestamp.fromDate(jsDate);
@@ -110,10 +146,12 @@ window.submitForm = async () => {
     // Capitalize first letter of type
     const capitalizedType = newTransaction.type.charAt(0).toUpperCase() +
                             newTransaction.type.slice(1);
-    alert(`Successfully Added ${capitalizedType}`);
+    showPopup(`Successfully Added ${capitalizedType}`);
   } catch (err) {
     console.error('Firestore write failed:', err);
-    alert('Firestore error: ' + err.message);
+    showPopup('Firestore error: ' + err.message);
+  } finally {
+    confirmBtn.disabled = false;
   }
   
 
