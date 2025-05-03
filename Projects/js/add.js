@@ -102,6 +102,16 @@ window.submitForm = async () => {
     confirmBtn.disabled = false;
     return;
   }
+  if (!amountEl.value){
+    showPopup('Enter an amount.');
+    confirmBtn.disabled = false;
+    return;
+  }
+  if (Number(amountEl.value) <= 0) {
+    showPopup('Please enter an amount greater than 0.');
+    confirmBtn.disabled = false;
+    return;
+  }
   if (!entryType){
     showPopup('Select Income or Expense.');
     confirmBtn.disabled = false;
@@ -109,11 +119,6 @@ window.submitForm = async () => {
   }
   if (entryType === 'expense' && !entryCategory){
     showPopup('Select a category.');
-    confirmBtn.disabled = false;
-    return;
-  }
-  if (!amountEl.value){
-    showPopup('Enter an amount.');
     confirmBtn.disabled = false;
     return;
   }
