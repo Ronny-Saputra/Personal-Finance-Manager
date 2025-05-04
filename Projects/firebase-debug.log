@@ -1,0 +1,21 @@
+[debug] [2025-05-03T03:20:22.971Z] ----------------------------------------------------------------------
+[debug] [2025-05-03T03:20:22.975Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Lenovo\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2025-05-03T03:20:22.975Z] CLI Version:   14.2.1
+[debug] [2025-05-03T03:20:22.976Z] Platform:      win32
+[debug] [2025-05-03T03:20:22.976Z] Node Version:  v22.13.0
+[debug] [2025-05-03T03:20:22.976Z] Time:          Sat May 03 2025 10:20:22 GMT+0700 (Western Indonesia Time)
+[debug] [2025-05-03T03:20:22.976Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-03T03:20:23.219Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-03T03:20:23.220Z] > authorizing via signed-in user (joyeaudia752265@gmail.com)
+[debug] [2025-05-03T03:20:23.220Z] [iam] checking project nextgrowthgroup for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2025-05-03T03:20:23.221Z] Checked if tokens are valid: false, expires at: 1746242016292
+[debug] [2025-05-03T03:20:23.221Z] Checked if tokens are valid: false, expires at: 1746242016292
+[debug] [2025-05-03T03:20:23.221Z] > refreshing access token with scopes: []
+[debug] [2025-05-03T03:20:23.223Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-05-03T03:20:23.223Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-05-03T03:20:23.417Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-05-03T03:20:23.418Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-05-03T03:20:23.427Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/nextgrowthgroup:testIamPermissions [none]
+[debug] [2025-05-03T03:20:23.427Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/nextgrowthgroup:testIamPermissions x-goog-quota-user=projects/nextgrowthgroup
+[debug] [2025-05-03T03:20:23.427Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/nextgrowthgroup:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}

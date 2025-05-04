@@ -1,49 +1,89 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+// ——— Firebase init (your config) ———
+const firebaseConfig = {
+  apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+  authDomain: "nextgrowthgroup.firebaseapp.com",
+  projectId: "nextgrowthgroup",
+  storageBucket: "nextgrowthgroup.firebasestorage.app",
+  messagingSenderId: "658734405364",
+  appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+  measurementId: "G-Y5DB2XL0TH"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// Predefined categories and colors
+const predefinedCategories = [
+  "Food & Drinks",
+  "Groceries",
+  "Entertainment",
+  "Living Expenses",
+  "Payments",
+  "Transportations"
+];
+const categoryColors = {
+  "Food & Drinks": "#e74c3c",
+  "Groceries": "#f1c40f",
+  "Entertainment": "#3498db",
+  "Living Expenses": "#9b59b6",
+  "Payments": "#2ecc71",
+  "Transportations": "#e67e22"
+};
+
+let transactions = [];
+let chart = null;
+
+onAuthStateChanged(auth, async user => {
+  if (!user) return window.location.href = "login.html";
+  document.querySelector('.welcome-message').textContent =
+  `Welcome, ${user.displayName || user.email}`;
+
+  // Fetch transactions from Firestore
+  const snaps = await getDocs(
+    query(
+      collection(db, "Users Transactions", user.uid, "transactions"),
+      orderBy("createdAt", "asc")
+    )
+  );
+  transactions = snaps.docs.map(d => {
+    const t = d.data();
+    return {
+      ...t,
+      date: t.createdAt.toDate()
+    };
+  });
+
+  // Now initialize your UI
+  initReports();
+});
+
+function initReports() {
   const monthSelect = document.getElementById("month-select");
   const ctx = document.getElementById("monthlyExpenseChart").getContext("2d");
   const reportTable = document.getElementById("report-table").querySelector("tbody");
   const totalIncomeDisplay = document.getElementById("total-income-value");
   const cashflowDisplay = document.getElementById("cashflow-value");
 
-  // Predefined categories
-  const predefinedCategories = [
-    "Food & Drinks",
-    "Groceries",
-    "Entertainment",
-    "Living Expenses",
-    "Payments",
-    "Transportations"
-  ];
-
-  // Color mapping for categories
-  const categoryColors = {
-    "Food & Drinks": "#e74c3c", // Red
-    "Groceries": "#f1c40f",     // Yellow
-    "Entertainment": "#3498db", // Blue
-    "Living Expenses": "#9b59b6", // Purple
-    "Payments": "#2ecc71",      // Green
-    "Transportations": "#e67e22" // Orange
-  };
-
-  let chart = null;
-
   function render(month) {
-    const monthData = {
-      income: 0,
-      expenses: {}
-    };
+    const monthData = { income: 0, expenses: {} };
 
     // Filter transactions by selected month
     transactions.forEach(t => {
-      const date = new Date(t.date);
-      const m = date.toLocaleString("default", { month: "long" });
+      const m = t.date.toLocaleString("default", { month: "long" });
       if (m === month) {
-        if (t.type === "income") {
-          monthData.income += t.amount; // Add to total income
-        } else if (t.type === "expense") {
-          if (!monthData.expenses[t.category]) monthData.expenses[t.category] = 0;
-          monthData.expenses[t.category] += t.amount; // Add to category expenses
+        if (t.type === "income") monthData.income += t.amount;
+        else {
+          monthData.expenses[t.category] = (monthData.expenses[t.category] || 0) + t.amount;
         }
       }
     });
@@ -51,38 +91,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Chart Data
     const labels = Object.keys(monthData.expenses);
     const values = labels.map(cat => monthData.expenses[cat]);
+    const backgroundColors = labels.map(cat => categoryColors[cat] || "#ccc");
 
-    // Assign colors based on category
-    const backgroundColors = labels.map(cat => categoryColors[cat] || "#ccc"); // Default to gray if no color is defined
-
-    // Draw Chart
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
       type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: `${month}`,
-          data: values,
-          backgroundColor: backgroundColors // Use custom colors here
-        }]
-      },
+      data: { labels, datasets: [{ label: month, data: values, backgroundColor: backgroundColors }]},
       options: {
         responsive: true,
         plugins: {
           legend: { display: true },
           tooltip: {
-            callbacks: {
-              label: context => `Rp ${context.parsed.y.toLocaleString()}`
-            }
+            callbacks: { label: ctx => `Rp ${ctx.parsed.y.toLocaleString()}` }
           }
         },
         scales: {
-          y: {
-            ticks: {
-              callback: value => `Rp ${value.toLocaleString()}`
-            }
-          }
+          y: { ticks: { callback: v => `Rp ${v.toLocaleString()}` } }
         }
       }
     });
@@ -90,26 +114,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Table Data
     reportTable.innerHTML = "";
     let totalExpenses = 0;
-
-    // Add predefined categories to the table
     predefinedCategories.forEach(cat => {
-      const spent = monthData.expenses[cat] || 0; // Default to 0 if no expense for this category
+      const spent = monthData.expenses[cat] || 0;
       totalExpenses += spent;
       reportTable.innerHTML += `
         <tr>
           <td>${cat}</td>
-          <td>Rp ${spent.toLocaleString()}</td> <!-- Total Expenses -->
-        </tr>
-      `;
+          <td>Rp ${spent.toLocaleString()}</td>
+        </tr>`;
     });
 
-    // Update Total Income and Cashflow
+    // Update totals
     totalIncomeDisplay.textContent = monthData.income.toLocaleString();
-    const cashflow = monthData.income - totalExpenses;
-    cashflowDisplay.textContent = cashflow.toLocaleString();
+    cashflowDisplay.textContent    = (monthData.income - totalExpenses).toLocaleString();
   }
 
-  // Initial load
+  // Initial load and listener
   render(monthSelect.value);
   monthSelect.addEventListener("change", () => render(monthSelect.value));
-});
+}

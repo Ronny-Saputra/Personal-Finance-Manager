@@ -8,51 +8,41 @@
 </head>
 <body>
   <div class="sidebar">
-  
-    <div class="welcome-message">Welcome, Darren</div>
-
+    <div class="welcome-message">Welcome, </div>
     <div class="sidebar-menu">
-      <a href="../html/dashboard.html" class="menu-item"> 
+      <a href="../html/dashboard.html" class="menu-item">
         <img src="../Logos/dashboard_logo.png" alt="Dashboard">
         <span>Dashboard</span>
       </a>
-    
-      <a href="../html/income.html" class="menu-item"> 
+      <a href="../html/income.html" class="menu-item">
         <img src="../Logos/expenses_logo.png" alt="Expenses">
         <span>Expenses and Income</span>
       </a>
-    
-      <a href="../html/transactions.html" class="menu-item"> 
+      <a href="../html/transactions.html" class="menu-item">
         <img src="../Logos/transactions_logo.png" alt="Transactions">
         <span>Transactions</span>
       </a>
-    
-      <a href="../html/reportss.html" class="menu-item active"> 
+      <a href="../html/reportss.html" class="menu-item active">
         <img src="../Logos/reports_logo.png" alt="Reports">
         <span>Monthly Reports</span>
       </a>
-    
-      <a href="../html/target.html" class="menu-item"> 
+      <a href="../html/target.html" class="menu-item">
         <img src="../Logos/monthly_logo.png" alt="Savings">
         <span>Monthly Savings Target</span>
       </a>
-    
-      <a href="../html/add.html" class="menu-item"> 
+      <a href="../html/add.html" class="menu-item">
         <img src="../Logos/adding_logo.png" alt="Add Income and Expenses">
         <span>Add Income and Expenses</span>
       </a>
     </div>
-
-
     <div class="sidebar-footer">
-      <a href="../html/login.html" class="menu-item" id="logout-button">
-        <img src="../Logos/logout_logo.png" alt="Logout" />
+      <a href="../html/login.html" class="menu-item"> 
+        <img src="../Logos/logout_logo.png" alt="Logout">
         <span>Logout</span>
-      </a>
-    </div>
+        </a>
+      </div>
     </div>
   </div>
-
 
 
   <div class="main-content">
@@ -104,9 +94,9 @@
     <strong>Cashflow:</strong> Rp <span id="cashflow-value">0</span>
   </div>
 </div>
-
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../js/reportss.js"></script>
+  <script src="../js/firebase.js"></script> 
+  <script src="../js/autolongout.js"></script> 
+  <script type="module" src="../js/reportss.js"></script>
 </body>
 </html>

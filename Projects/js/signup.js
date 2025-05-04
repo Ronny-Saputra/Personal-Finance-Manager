@@ -1,80 +1,105 @@
-// Import Firebase SDK
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
-// Firebase Config
-const firebaseConfig = {
-    apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
-    authDomain: "nextgrowthgroup.firebaseapp.com",
-    databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
-    projectId: "nextgrowthgroup",
-    storageBucket: "nextgrowthgroup.firebasestorage.app",
-    messagingSenderId: "658734405364",
-    appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
-    measurementId: "G-Y5DB2XL0TH"
-  };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-// Function: Sign Up with Email & Password
-window.signUp = async () => {
-    let name = document.getElementById('name').value;
-    let email = document.getElementById('email').value;
-    let password = document.getElementById('password').value;
-
-    if (name === "" || email === "" || password === "") {
-        alert("Please fill in all fields!");
-        return;
+// js/signup.js
+import {
+    auth,
+    db,
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    updateProfile,
+    doc,
+    setDoc
+  } from '../src/firebaseAuth.js';
+  
+  /** showPopup with guard against missing dialog & showModal */
+  export function showPopup(msg) {
+    const dlg = document.getElementById('notify-dialog');
+    const msgEl = document.getElementById('notify-message');
+    if (!dlg || !msgEl) return;
+    msgEl.textContent = msg;
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+  }
+  
+  /** Sign Up with Email & Password */
+  export async function signUp() {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const pwInput    = document.getElementById('password');
+  
+    const name  = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const pw    = pwInput.value;
+  
+    // Empty‐field check
+    if (!name || !email || !pw) {
+      showPopup("Please fill in all fields!");
+      return;
     }
-
+  
+    // Simple email‐format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showPopup("Invalid email format!");
+      return;
+    }
+  
     try {
-        // Create user with email and password
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        await setDoc(doc(db,"Users", user.uid), {
-            uid : user.uid,
-            name: name,
-            email: user.email,
-            password: password
-        })
-
-        // Update displayName (full name)
-        await updateProfile(user, {
-            displayName: name
-        });
-
-        console.log("User registered:", user);
-        alert("Sign Up Successful! Welcome, " + name);
-
-        // Redirect to dashboard.html
-        window.location.href = 'dashboard.html';
+      // Create user
+      const { user } = await createUserWithEmailAndPassword(auth, email, pw);
+  
+      // Store profile in Firestore
+      await setDoc(doc(db, "Users", user.uid), {
+        uid: user.uid,
+        name,
+        email
+      });
+  
+      // Update displayName
+      await updateProfile(user, { displayName: name });
+  
+      showPopup("Sign Up Successful! Welcome, " + name);
+      if (window.location && typeof window.location.replace === 'function') {
+        window.location.replace('dashboard.html');
+      }
     } catch (error) {
-        console.error("Error during sign up:", error);
-        alert("Sign Up Failed: " + error.message);
+      // Firebase “email-already-in-use” code
+      if (error.code === "auth/email-already-in-use") {
+        showPopup("Email sudah terdaftar!");
+      } else {
+        showPopup("Sign Up Failed: " + error.message);
+      }
     }
-};
-
-// Function: Sign Up with Google
-window.signUpWithGoogle = async () => {
+  }
+  
+  /** Google Sign‑Up */
+  export async function signUpWithGoogle() {
     try {
-        const result = await signInWithPopup(auth, provider);
-        console.log("User signed up with Google:", result.user);
-        alert("Sign Up Successful! Welcome, " + result.user.displayName);
-
-        // Redirect to dashboard.html
-        window.location.href = 'dashboard.html';
+      const provider = new GoogleAuthProvider();
+      const result   = await signInWithPopup(auth, provider);
+      showPopup("Sign Up Successful! Welcome, " + result.user.displayName);
+      if (window.location && typeof window.location.replace === 'function') {
+        window.location.replace('dashboard.html');
+      }
     } catch (error) {
-        console.error("Error signing up with Google:", error);
-        alert("Google Sign Up Failed: " + error.message);
+      showPopup("Google Sign Up Failed: " + error.message);
     }
-};
+  }
+  
+  /** Redirect to Login */
+  export function goToLogin() {
+    if (window.location) window.location.href = 'login.html';
+  }
+  
+window.signUp = signUp;
+window.signUpWithGoogle = signUpWithGoogle;
+window.goToLogin = goToLogin;
 
-// Redirect to Login Page
-window.goToLogin = () => {
-    window.location.href = 'login.html';
-};
+window.addEventListener("DOMContentLoaded", () => {
+  const notifyOkButton = document.getElementById("notify-ok");
+  const notifyDialog = document.getElementById("notify-dialog");
+
+  if (notifyOkButton && notifyDialog) {
+    notifyOkButton.addEventListener("click", () => {
+      notifyDialog.close();
+    });
+  }
+});

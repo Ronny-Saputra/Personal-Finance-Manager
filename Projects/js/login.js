@@ -1,115 +1,137 @@
- // Import Firebase SDK
- import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
- import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import {
+    auth,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    sendPasswordResetEmail
+  } from '../src/firebaseAuth.js';
+  
+  /**
+   * Opens the notification dialog with a given message.
+   * Guards against missing dialog or missing showModal support.
+   */
+  export function showPopup(msg) {
+    const notifyDialog  = document.getElementById('notify-dialog');
+    const notifyMessage = document.getElementById('notify-message');
+    if (!notifyDialog || !notifyMessage) return;
+  
+    notifyMessage.textContent = msg;
+    if (typeof notifyDialog.showModal === 'function') {
+      notifyDialog.showModal();
+    }
+  }
+  
+  /**
+   * Handles email & password login with validation and feedback.
+   */
+  export async function login() {
+    const emailInput    = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const form          = document.getElementById('loginForm');
+    const submitBtn     = document.getElementById('submitButton');
+  
+    const email    = emailInput.value;
+    const password = passwordInput.value;
+  
+    if (!email || !password) {
+      showPopup("Email dan password harus diisi!");
+      return;
+    }
+  
+    submitBtn.disabled    = true;
+    submitBtn.textContent = "Loading...";
+  
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showPopup("Login berhasil!");
+  
+      if (window.location && typeof window.location.replace === 'function') {
+        window.location.replace('dashboard.html');
+      }
+    } catch (error) {
+      if (error.code === "auth/wrong-password") {
+        showPopup("Password salah!");
+        passwordInput.style.borderColor = "red";
+  
+        if (!document.getElementById('shakeStyle')) {
+          const style = document.createElement('style');
+          style.id = 'shakeStyle';
+          style.innerHTML = `
+            @keyframes shake {
+              0%,100% { transform: translateX(0); }
+              25%     { transform: translateX(-10px); }
+              75%     { transform: translateX(10px); }
+            }
+            .shake { animation: shake 0.5s; }
+          `;
+          document.head.appendChild(style);
+        }
+  
+        form.classList.add("shake");
+        setTimeout(() => form.classList.remove("shake"), 500);
+      } else if (error.code === "auth/user-not-found") {
+        showPopup("User tidak ditemukan! Silakan daftar terlebih dahulu.");
+      } else {
+        showPopup("Login gagal! " + error.message);
+      }
+    } finally {
+      submitBtn.disabled    = false;
+      submitBtn.textContent = "Submit";
+    }
+  }
+  
+  /**
+   * Handles Google login via popup.
+   */
+  export async function signInWithGoogle() {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result   = await signInWithPopup(auth, provider);
+      showPopup("Login Berhasil! Selamat datang, " + result.user.displayName);
+      if (window.location && typeof window.location.replace === 'function') {
+        window.location.replace('dashboard.html');
+      }
+    } catch (error) {
+      showPopup("Login gagal! " + error.message);
+    }
+  }
+  
+  /**
+   * Sends a password reset email.
+   */
+  export async function forgotPassword() {
+    const email = prompt("Masukkan email kamu:");
+    if (!email) return;
+  
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showPopup("Link reset password sudah dikirim ke email kamu!");
+    } catch (error) {
+      showPopup("Gagal mengirim link reset password: " + error.message);
+    }
+  }
+  
+  /**
+   * Redirects user to the sign-up page.
+   */
+  export function goToSignUp() {
+    if (window.location) {
+      window.location.href = 'signup.html';
+    }
+  }
+  
+  // Expose functions to global scope for inline HTML onclick compatibility
+window.login = login;
+window.forgotPassword = forgotPassword;
+window.signInWithGoogle = signInWithGoogle;
+window.goToSignUp = goToSignUp;
+window.addEventListener("DOMContentLoaded", () => {
+  const notifyOkButton = document.getElementById("notify-ok");
+  const notifyDialog = document.getElementById("notify-dialog");
 
- // Firebase Config
- const firebaseConfig = {
-     apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
-     authDomain: "nextgrowthgroup.firebaseapp.com",
-     databaseURL: "https://nextgrowthgroup-default-rtdb.firebaseio.com",
-     projectId: "nextgrowthgroup",
-     storageBucket: "nextgrowthgroup.firebasestorage.app",
-     messagingSenderId: "658734405364",
-     appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
-     measurementId: "G-Y5DB2XL0TH"
- };
-
- // Initialize Firebase
- const app = initializeApp(firebaseConfig);
- const auth = getAuth(app);
- const provider = new GoogleAuthProvider();
-
- // Google Login Function
- window.signInWithGoogle = async () => {
-     try {
-         const result = await signInWithPopup(auth, provider);
-         console.log("User berhasil login:", result.user);
-         alert("Login Berhasil! Selamat datang, " + result.user.displayName);
-
-         // Redirect ke dashboard.html
-         window.location.replace('dashboard.html');
-     } catch (error) {
-         console.error("Error saat login:", error);
-         alert("Login gagal! " + error.message);
-     }
- };
-
- // Email & Password Login with Validation
- window.login = async () => {
-     const email = document.getElementById('email').value;
-     const password = document.getElementById('password').value;
-     const loginForm = document.getElementById('loginForm');
-     const submitButton = document.getElementById('submitButton');
-
-     // Validasi input
-     if (!email || !password) {
-         alert("Email dan password harus diisi!");
-         return;
-     }
-
-     // Loading indicator
-     submitButton.disabled = true;
-     submitButton.textContent = "Loading...";
-
-     try {
-         await signInWithEmailAndPassword(auth, email, password);
-         alert("Login berhasil!");
-
-         // Redirect ke dashboard.html
-         window.location.replace('dashboard.html');
-     } catch (error) {
-         if (error.code === "auth/wrong-password") {
-             alert("Password salah!");
-
-             // Feedback visual: Ubah warna input jadi merah
-             const passwordInput = document.getElementById('password');
-             passwordInput.style.borderColor = "red";
-
-             // Feedback visual: Tambah efek getaran (inline CSS)
-             if (!document.getElementById('shakeStyle')) {
-                 const style = document.createElement('style');
-                 style.id = 'shakeStyle';
-                 style.innerHTML = `
-                     @keyframes shake {
-                         0%, 100% { transform: translateX(0); }
-                         25% { transform: translateX(-10px); }
-                         75% { transform: translateX(10px); }
-                     }
-                     .shake {
-                         animation: shake 0.5s;
-                     }
-                 `;
-                 document.head.appendChild(style);
-             }
-             loginForm.classList.add("shake");
-             setTimeout(() => loginForm.classList.remove("shake"), 500);
-         } else if (error.code === "auth/user-not-found") {
-             alert("User tidak ditemukan! Silakan daftar terlebih dahulu.");
-         } else {
-             alert("Login gagal! " + error.message);
-         }
-     } finally {
-         // Kembalikan tombol ke state awal
-         submitButton.disabled = false;
-         submitButton.textContent = "Submit";
-     }
- };
-
- // Forgot Password Function
- window.forgotPassword = async () => {
-     const email = prompt("Masukkan email kamu:");
-     if (email) {
-         try {
-             await sendPasswordResetEmail(auth, email);
-             alert("Link reset password sudah dikirim ke email kamu!");
-         } catch (error) {
-             console.error("Gagal mengirim link reset password:", error.message);
-             alert("Gagal mengirim link reset password: " + error.message);
-         }
-     }
- };
-
- // Redirect to Sign-Up Page
- window.goToSignUp = () => {
-     window.location.href = 'signup.html';
- };
+  if (notifyOkButton && notifyDialog) {
+    notifyOkButton.addEventListener("click", () => {
+      notifyDialog.close();
+    });
+  }
+});

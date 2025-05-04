@@ -1,60 +1,96 @@
 /**
  * @jest-environment jsdom
  */
+import { login } from '../js/login.js';
+import * as fb from '../src/firebaseAuth.js';
 
-import fs from 'fs';
-import path from 'path';
+jest.mock('../src/firebaseAuth.js', () => ({
+  auth: {},
+  signInWithEmailAndPassword: jest.fn(),
+  sendPasswordResetEmail: jest.fn(),
+  GoogleAuthProvider: jest.fn(),
+  signInWithPopup: jest.fn()
+}));
 
-// Stub only necessary Firebase functions on global scope
-window.signInWithEmailAndPassword = jest.fn();
-window.getAuth = jest.fn();
-window.initializeApp = jest.fn();
-
-// Load login.js into JSDOM context
-beforeAll(() => {
-  const scriptContent = fs.readFileSync(path.resolve(__dirname, '../js/login.js'), 'utf8');
-  const moduleFunc = new Function('exports', 'require', 'window', scriptContent);
-  moduleFunc({}, require, window);
-});
-
-describe('Login Page (Selected Tests)', () => {
-  let html;
+describe('login()', () => {
+  let emailInput, passwordInput, dialog, dialogMsg, form;
 
   beforeAll(() => {
-    html = fs.readFileSync(path.resolve(__dirname, '../html/login.html'), 'utf8');
+    jest.useFakeTimers();
+    // Stub navigation
+    delete window.location;
+    window.location = { replace: jest.fn() };
   });
+
+  afterAll(() => jest.useRealTimers());
 
   beforeEach(() => {
-    document.documentElement.innerHTML = html;
-    window.alert = jest.fn();
-    window.location.replace = jest.fn();
+    document.body.innerHTML = `
+      <input id="email" />
+      <input id="password" />
+      <button id="submitButton">Submit</button>
+      <div id="loginForm"></div>
+      <dialog id="notify-dialog">
+        <p id="notify-message"></p>
+        <button id="notify-ok">OK</button>
+      </dialog>
+    `;
+
+    emailInput    = document.getElementById('email');
+    passwordInput = document.getElementById('password');
+    dialog        = document.getElementById('notify-dialog');
+    dialogMsg     = document.getElementById('notify-message');
+    form          = document.getElementById('loginForm');
+
+    // Stub showModal
+    dialog.showModal = jest.fn();
   });
 
-  // 1. Validasi input kosong
-  test('alerts when email or password empty', async () => {
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
-
-    await window.login();
-
-    expect(window.alert).toHaveBeenCalledWith('Email dan password harus diisi!');
-    expect(window.signInWithEmailAndPassword).not.toHaveBeenCalled();
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.clearAllTimers();
   });
 
-  // 4. Error user-not-found
-  test('user-not-found shows appropriate alert', async () => {
-    document.getElementById('email').value = 'nouser@example.com';
-    document.getElementById('password').value = 'pass';
-    const error = { code: 'auth/user-not-found', message: 'No user' };
-    window.signInWithEmailAndPassword.mockRejectedValue(error);
+  test('empty fields shows validation error', async () => {
+    emailInput.value    = '';
+    passwordInput.value = '';
+    await login();
 
-    await window.login();
-    expect(window.alert).toHaveBeenCalledWith('User tidak ditemukan! Silakan daftar terlebih dahulu.');
+    expect(dialogMsg.textContent).toBe('Email dan password harus diisi!');
+    expect(dialog.showModal).toHaveBeenCalled();
   });
 
-  // 6. goToSignUp navigasi
-  test('goToSignUp changes location', () => {
-    window.goToSignUp();
-    expect(window.location.href).toContain('signup.html');
+  test('successful login flow', async () => {
+    emailInput.value    = 'a@b.com';
+    passwordInput.value = '123';
+    fb.signInWithEmailAndPassword.mockResolvedValueOnce({ user: {} });
+
+    await login();
+
+    expect(fb.signInWithEmailAndPassword)
+      .toHaveBeenCalledWith(fb.auth, 'a@b.com', '123');
+
+    expect(dialogMsg.textContent).toBe('Login berhasil!');
+    expect(dialog.showModal).toHaveBeenCalled();
+    expect(window.location.replace).toHaveBeenCalledWith('dashboard.html');
+  });
+
+  test('wrong password shakes form', async () => {
+    emailInput.value    = 'u@u.com';
+    passwordInput.value = 'bad';
+    fb.signInWithEmailAndPassword.mockRejectedValueOnce({ code: 'auth/wrong-password' });
+
+    const addSpy    = jest.spyOn(form.classList, 'add');
+    const removeSpy = jest.spyOn(form.classList, 'remove');
+
+    await login();
+
+    expect(dialogMsg.textContent).toBe('Password salah!');
+    expect(dialog.showModal).toHaveBeenCalled();
+    expect(passwordInput.style.borderColor).toBe('red');
+    expect(addSpy).toHaveBeenCalledWith('shake');
+
+    jest.advanceTimersByTime(500);
+    expect(removeSpy).toHaveBeenCalledWith('shake');
   });
 });

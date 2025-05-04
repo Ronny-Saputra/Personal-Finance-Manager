@@ -1,65 +1,152 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
+// — Firebase init (your config) —
+const firebaseConfig = {
+  apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+  authDomain: "nextgrowthgroup.firebaseapp.com",
+  projectId: "nextgrowthgroup",
+  storageBucket: "nextgrowthgroup.firebasestorage.app",
+  messagingSenderId: "658734405364",
+  appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+  measurementId: "G-Y5DB2XL0TH"
+};
+initializeApp(firebaseConfig);
+const auth = getAuth();
+const db   = getFirestore();
+
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+// Only attach the listener if the button exists (prevents errors in tests)
+if (notifyOkButton && notifyDialog) {
+  notifyOkButton.addEventListener('click', () => {
+    notifyDialog.close();
+  });
+}
+
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
+
+let currentUser;
+
+// Wait for auth, then fetch+render
+onAuthStateChanged(auth, async user => {
+  if (!user) return window.location.href = "login.html";
+  document.querySelector('.welcome-message').textContent =
+    `Welcome, ${user.displayName || user.email}`;
+  currentUser = user;
+
+  const txSnap = await getDocs(
+    query(
+      collection(db, "Users Transactions", user.uid, "transactions"),
+      orderBy("createdAt", "asc")
+    )
+  );
+  const transactions = txSnap.docs.map(d => {
+    const t = d.data();
+    return {
+      ...t,
+      date: t.createdAt.toDate()
+    };
+  });
+
+  renderIncomePage(transactions);
+});
+
+function renderIncomePage(transactions) {
+  // Aggregate
   const incomeByMonth = {};
   const expenseByCategory = {};
-  let totalIncome = 0;
-  let totalExpense = 0;
+  let totalIncome = 0, totalExpense = 0;
 
   transactions.forEach(t => {
+    const m = t.date.toLocaleString("default", { month: "long" });
     if (t.type === "income") {
-      const month = new Date(t.date).toLocaleString("default", { month: "long" });
-      incomeByMonth[month] = (incomeByMonth[month] || 0) + t.amount;
+      incomeByMonth[m] = (incomeByMonth[m] || 0) + t.amount;
       totalIncome += t.amount;
-    } else if (t.type === "expense") {
+    } else {
       expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + t.amount;
       totalExpense += t.amount;
     }
   });
 
-  const incomeMonthTable = document.getElementById("income-month-table").querySelector("tbody");
-  const incomeAmountTable = document.getElementById("income-amount-table").querySelector("tbody");
+  // Tables
+  const incMonthBody = document
+    .getElementById("income-month-table")
+    .querySelector("tbody");
+  const incAmtBody = document
+    .getElementById("income-amount-table")
+    .querySelector("tbody");
+
+  // Clear existing (but keep the .total-row placeholder)
+  incMonthBody.querySelectorAll("tr:not(.total-row)").forEach(r => r.remove());
+  incAmtBody.querySelectorAll("tr:not(.total-row)").forEach(r => r.remove());
 
   Object.entries(incomeByMonth).forEach(([month, amt]) => {
-    const rowMonth = document.createElement("tr");
-    rowMonth.innerHTML = `<td>${month}</td>`;
-    const ref = incomeMonthTable.querySelector(".total-row");
-    ref ? incomeMonthTable.insertBefore(rowMonth, ref) : incomeMonthTable.appendChild(rowMonth);
+    const rowM = document.createElement("tr");
+    rowM.innerHTML = `<td>${month}</td>`;
+    incMonthBody.insertBefore(rowM, incMonthBody.querySelector(".total-row"));
 
-    const rowAmount = document.createElement("tr");
-    rowAmount.innerHTML = `<td>Rp. ${amt.toLocaleString()}</td>`;
-    const refAmt = incomeAmountTable.querySelector(".total-row");
-    refAmt ? incomeAmountTable.insertBefore(rowAmount, refAmt) : incomeAmountTable.appendChild(rowAmount);
+    const rowA = document.createElement("tr");
+    rowA.innerHTML = `<td>Rp ${amt.toLocaleString()}</td>`;
+    incAmtBody.insertBefore(rowA, incAmtBody.querySelector(".total-row"));
   });
 
-  incomeAmountTable.querySelector(".total-row").innerHTML = `<td><strong>Rp. ${totalIncome.toLocaleString()}</strong></td>`;
+  // Update totals
+  incAmtBody.querySelector(".total-row").innerHTML =
+    `<td><strong>Rp ${totalIncome.toLocaleString()}</strong></td>`;
 
-  const expenseCategoryTable = document.getElementById("expense-category-table").querySelector("tbody");
-  const expenseAmountTable = document.getElementById("expense-amount-table").querySelector("tbody");
+  // Expense tables
+  const expCatBody = document
+    .getElementById("expense-category-table")
+    .querySelector("tbody");
+  const expAmtBody = document
+    .getElementById("expense-amount-table")
+    .querySelector("tbody");
 
-  Object.entries(expenseByCategory).forEach(([category, amt]) => {
-    const rowCat = document.createElement("tr");
-    rowCat.innerHTML = `<td>${category}</td>`;
-    const ref = expenseCategoryTable.querySelector(".total-row");
-    ref ? expenseCategoryTable.insertBefore(rowCat, ref) : expenseCategoryTable.appendChild(rowCat);
+  expCatBody.querySelectorAll("tr:not(.total-row)").forEach(r => r.remove());
+  expAmtBody.querySelectorAll("tr:not(.total-row)").forEach(r => r.remove());
 
-    const rowAmt = document.createElement("tr");
-    rowAmt.innerHTML = `<td>Rp. ${amt.toLocaleString()}</td>`;
-    const refAmt = expenseAmountTable.querySelector(".total-row");
-    refAmt ? expenseAmountTable.insertBefore(rowAmt, refAmt) : expenseAmountTable.appendChild(rowAmt);
+  Object.entries(expenseByCategory).forEach(([cat, amt]) => {
+    const rowC = document.createElement("tr");
+    rowC.innerHTML = `<td>${cat}</td>`;
+    expCatBody.insertBefore(rowC, expCatBody.querySelector(".total-row"));
+
+    const rowE = document.createElement("tr");
+    rowE.innerHTML = `<td>Rp ${amt.toLocaleString()}</td>`;
+    expAmtBody.insertBefore(rowE, expAmtBody.querySelector(".total-row"));
   });
 
-  expenseAmountTable.querySelector(".total-row").innerHTML = `<td><strong>Rp. ${totalExpense.toLocaleString()}</strong></td>`;
+  expAmtBody.querySelector(".total-row").innerHTML =
+    `<td><strong>Rp ${totalExpense.toLocaleString()}</strong></td>`;
 
-  const cashFlow = totalIncome - totalExpense;
-  document.querySelector(".cash-flow").innerHTML = `Cash Flow: Rp. ${cashFlow.toLocaleString()}`;
-});
-
-// Developer helper to clear all data
-function clearTransactions() {
-  if (confirm("Are you sure you want to clear all transaction data?")) {
-    localStorage.removeItem("transactions");
-    alert("All data cleared.");
-    location.reload();
+  // Cash flow
+  const cashFlowEl = document.querySelector(".cash-flow");
+  if (cashFlowEl) {
+    cashFlowEl.textContent = 
+      `Cash Flow: Rp ${ (totalIncome - totalExpense).toLocaleString() }`;
   }
 }
+
+// Developer helper to clear transactions (Firestore)
+window.clearTransactions = async () => {
+  if (!confirm("Clear all transaction data?")) return;
+  const snaps = await getDocs(collection(db, "Users Transactions", currentUser.uid, "transactions"));
+  await Promise.all(snaps.docs.map(d => deleteDoc(d.ref)));
+  showPopup("All data cleared.");
+  location.reload();
+};
+
+export { renderIncomePage };

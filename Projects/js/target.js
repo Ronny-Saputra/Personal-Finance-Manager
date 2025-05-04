@@ -1,170 +1,249 @@
-let currentSavings = {}; // Track current savings contributions per month
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  doc,
+  updateDoc,
+  deleteDoc,
+  Timestamp
+} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
-// Format numbers with thousand separators for input fields
-document.getElementById("income").addEventListener("input", function (e) {
-  let raw = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
-  if (raw.length === 0) {
-    e.target.value = "";
-    return;
-  }
-  // Add thousand separators
-  e.target.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// ——— Firebase init ———
+const firebaseConfig = {
+  apiKey: "AIzaSyAU6CkWKfo2JuK6HW9dWNp_wafse0t4YUs",
+  authDomain: "nextgrowthgroup.firebaseapp.com",
+  projectId: "nextgrowthgroup",
+  storageBucket: "nextgrowthgroup.firebasestorage.app",
+  messagingSenderId: "658734405364",
+  appId: "1:658734405364:web:2e11417e4465a53a90b0a1",
+  measurementId: "G-Y5DB2XL0TH"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ——— Auth guard ———
+let currentUser = null;
+onAuthStateChanged(auth, user => {
+  if (!user) return window.location.href = "login.html";
+  currentUser = user;
+  document.querySelector('.welcome-message').textContent =
+    `Welcome, ${user.displayName || user.email}`;
 });
 
-document.getElementById("contribution").addEventListener("input", function (e) {
-  let raw = e.target.value.replace(/\D/g, ""); // Remove all non-digit characters
-  if (raw.length === 0) {
-    e.target.value = "";
-    return;
-  }
-  // Add thousand separators
-  e.target.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// ——— DOM refs ———
+const monthEl        = document.getElementById("month");
+const incomeEl       = document.getElementById("income");
+const percentageEl   = document.getElementById("percentage");
+const resultEl       = document.getElementById("result");
+const breakdownEl    = document.getElementById("breakdown");
+const allocationEl   = document.getElementById("allocation");
+const contributionEl = document.getElementById("contribution");
+const historyEl      = document.getElementById("history");
+const notifyDialog    = document.getElementById('notify-dialog');
+const notifyMessage   = document.getElementById('notify-message');
+const notifyOkButton  = document.getElementById('notify-ok');
+
+notifyOkButton.addEventListener('click', () => {
+  notifyDialog.close();
 });
 
-// Calculate savings target
-function calculateSavings() {
-  const selectedMonth = document.getElementById("month").value;
-  const incomeInput = document.getElementById("income").value.replace(/\./g, '');
-  const income = parseFloat(incomeInput);
-  const percentage = parseFloat(document.getElementById("percentage").value);
+function showPopup(msg) {
+  notifyMessage.textContent = msg;
+  notifyDialog.showModal();
+}
 
-  if (isNaN(income) || income <= 0) {
-    alert("Please enter a valid positive income.");
-    return;
-  }
+// ——— Input formatting ———
+[incomeEl, contributionEl].forEach(el =>
+  el.addEventListener("input", e => {
+    let raw = e.target.value.replace(/\D/g, "");
+    e.target.value = raw ?
+      raw.replace(/\B(?=(\d{3})+(?!\d))/g, ".") :
+      "";
+  })
+);
 
-  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-    alert("Please enter a valid percentage between 0 and 100.");
-    return;
-  }
-
-  const savingsGoal = (income * percentage) / 100; // Total savings goal
-  const formattedSavingsGoal = savingsGoal.toLocaleString("id-ID");
-
-  document.getElementById("result").textContent = `Savings Goal: Rp ${formattedSavingsGoal}`;
-
-  const needs = income * 0.5;
-  const wants = income * 0.3;
-  const formattedNeeds = needs.toLocaleString("id-ID");
-  const formattedWants = wants.toLocaleString("id-ID");
-
-  document.getElementById("allocation").innerHTML = `
-    <h4>Suggested Allocation:</h4>
-    <div><strong>Needs (50%)</strong>: Rp ${formattedNeeds}</div>
-    <div><strong>Wants (30%)</strong>: Rp ${formattedWants}</div>
-    <div><strong>Savings (${percentage}%)</strong>: Rp ${formattedSavingsGoal}</div>
+// ——— 1) Calculate ———
+window.calculateSavings = () => {
+  const inc = parseFloat(incomeEl.value.replace(/\./g,""));
+  const pct = parseFloat(percentageEl.value);
+  if (isNaN(inc)||inc<=0) { showPopup("Income invalid"); return null; }
+  if (isNaN(pct)||pct<0||pct>100) { showPopup("Percentage invalid"); return null; }
+  const goal = inc * (pct/100);
+  resultEl.textContent    = `Savings Goal: Rp ${goal.toLocaleString("id-ID")}`;
+  breakdownEl.textContent = `(${pct}% of Rp ${inc.toLocaleString("id-ID")})`;
+  allocationEl.innerHTML  = `
+    <div>Needs (50%): Rp ${(inc*0.5).toLocaleString("id-ID")}</div>
+    <div>Wants (30%): Rp ${(inc*0.3).toLocaleString("id-ID")}</div>
+    <div>Savings (${pct}%): Rp ${goal.toLocaleString("id-ID")}</div>
   `;
+  return goal;
+};
+
+// helper: base path to collection
+function targetsCol() {
+  return collection(db, "Users Saving Target", currentUser.uid, "savingsTargets");
 }
 
-// Save savings data to localStorage
-function saveSavings() {
-  const selectedMonth = document.getElementById("month").value;
-  const rawIncome = document.getElementById("income").value;
-  const income = parseFloat(rawIncome.replace(/\./g, ''));
-  const percentage = parseFloat(document.getElementById("percentage").value);
+// ——— 2) Save: carry over previous contributions ———
+window.saveSavings = async () => {
+  
+  const saveBtn = document.querySelector('button[onclick="saveSavings()"]');
+  if (saveBtn.disabled) return;
+  saveBtn.disabled = true; 
 
-  if (isNaN(income) || income <= 0) {
-    alert("Please enter a valid positive income.");
+  if (!currentUser) return showPopup("Please sign in first.");
+  const goal = calculateSavings();
+  if (goal === null) {
+    saveBtn.disabled = false;
     return;
   }
-  if (isNaN(percentage) || percentage < 0 || percentage > 100) {
-    alert("Please enter a valid percentage between 0 and 100.");
-    return;
+  const month = monthEl.value;
+  const base  = targetsCol();
+
+  try {
+    // Fetch most recent entry for this month
+    const qPrev = query(
+      base,
+      where("month", "==", month),
+      orderBy("createdAt", "desc"),
+      limit(1)
+    );
+    const snapsPrev = await getDocs(qPrev);
+    let carryContrib = [];
+    if (!snapsPrev.empty) {
+      carryContrib = snapsPrev.docs[0].data().contributions || [];
+    }
+
+    // Add a new document, carrying over contributions
+    await addDoc(base, {
+      month,
+      income:       parseFloat(incomeEl.value.replace(/\./g,"")),
+      percentage:   parseFloat(percentageEl.value),
+      targetAmount: goal,
+      contributions: carryContrib.slice(), // copy array
+      createdAt:    Timestamp.now()
+    });
+    const displayMonth = month.charAt(0).toUpperCase() + month.slice(1);
+    showPopup (`Successfully Added Saving Target For ${displayMonth}`);
+      incomeEl.value = "";
+      showHistory();
+  } catch (e) {
+    console.error("Save failed:", e);
+    showPopup("Save failed: " + e.message);
   }
+};
 
-  const savingsGoal = (income * percentage) / 100; // Total savings goal
+// ——— 3) Add contribution only to latest doc for that month ———
+window.addContribution = async () => {
 
-  // Create the savings data object
-  const savingsData = {
-    month: selectedMonth,
-    monthlyIncome: income, // Monthly income
-    savingsPercentage: percentage, // Savings percentage
-    targetAmount: savingsGoal, // Total savings goal
-    recommendedSavings: currentSavings[selectedMonth] || 0, // Contributions so far
-    createdAt: new Date().toISOString() // Timestamp
-  };
+  const addBtn = document.querySelector('button[onclick="addContribution()"]');
+  if (addBtn.disabled) return;
+  addBtn.disabled = true;
 
-  // Retrieve existing savings data from localStorage
-  let savingsHistory = JSON.parse(localStorage.getItem("savingsData")) || [];
+  if (!currentUser) return showPopup("Please sign in first.");
+  const val = parseFloat(contributionEl.value.replace(/\./g,""));
+  if (isNaN(val)||val<=0) return showPopup("Contribution invalid.");
 
-  // Always add a new entry without replacing the old one
-  savingsHistory.push(savingsData);
+  const q = query(
+    targetsCol(),
+    where("month","==",monthEl.value),
+    orderBy("createdAt","desc"),
+    limit(1)
+  );
 
-  // Save updated data back to localStorage
-  localStorage.setItem("savingsData", JSON.stringify(savingsHistory));
-  alert("Savings plan saved!");
-  showHistory(); // Refresh history display after saving
+  try {
+    const snaps = await getDocs(q);
+    if (snaps.empty) {
+      return showPopup("No target found for this month. Save first.");
+    }
+    const docSnap = snaps.docs[0];
+    const data    = docSnap.data();
+    const contributions = data.contributions || [];
+    contributions.push({ amount: val, at: Timestamp.now() });
+
+    await updateDoc(doc(
+      db,
+      "Users Saving Target",
+      currentUser.uid,
+      "savingsTargets",
+      docSnap.id
+    ), { contributions });
+
+    const monthName = monthEl.value;
+    const displayMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+    showPopup(`Successfully Added Contribution For ${displayMonth}`);
+    contributionEl.value = "";
+    showHistory();
+  } catch (e) {
+    console.error("Add contribution failed:", e);
+    showPopup("Add failed: " + e.message);
+  } finally {
+    addBtn.disabled = false;
+  }
+};
+
+// ——— 4) Show history, correctly numbered ———
+window.showHistory = async () => {
+  if (!currentUser) return;
+  historyEl.innerHTML = "";
+
+  const q = query(targetsCol(), orderBy("createdAt","desc"));
+
+  try {
+    const snaps = await getDocs(q);
+    if (snaps.empty) {
+      historyEl.innerText = "No savings history found.";
+      return;
+    }
+
+    const docs = snaps.docs;
+    docs.forEach((docSnap, i) => {
+      const d         = docSnap.data();
+      const total     = (d.contributions||[])
+                        .reduce((sum,c)=>sum+(c.amount||0),0);
+      const dateStr   = d.createdAt.toDate().toLocaleDateString("id-ID");
+
+      const div = document.createElement("div");
+      div.style.marginBottom = "10px";
+      div.innerHTML = `
+        <strong>Log #${i+1}:</strong><br>
+        Month: ${d.month} |
+        Date: ${dateStr} |
+        Income: Rp ${d.income.toLocaleString("id-ID")} |
+        Percentage: ${d.percentage}% |
+        Savings Goal: Rp ${d.targetAmount.toLocaleString("id-ID")} |
+        Contributions: Rp ${total.toLocaleString("id-ID")}
+      `;
+      historyEl.appendChild(div);
+    });
+  } catch (e) {
+    console.error("Load history failed:", e);
+    historyEl.innerText = "Failed to load history.";
+  }
+};
+
+// ——— 5) Clear history ———
+window.clearHistory = async () => {
+  if (!confirm("Clear all history?")) return;
+  try {
+    const snaps = await getDocs(targetsCol());
+    await Promise.all(snaps.docs.map(d => deleteDoc(d.ref)));
+    historyEl.innerHTML = "";
+  } catch (e) {
+    console.error("Clear failed:", e);
+    showPopup("Clear failed: " + e.message);
+  }
+};
+
+// Auto-load on startup if History tab is active
+if (document.getElementById("history-tab").classList.contains("active")) {
+  showHistory();
 }
-
-// Display savings history from localStorage
-function showHistory() {
-  const history = JSON.parse(localStorage.getItem("savingsData")) || [];
-  console.log("Data loaded from localStorage:", history); // Debugging log
-  const historyDiv = document.getElementById("history");
-  historyDiv.innerHTML = "";
-
-  if (history.length === 0) {
-    historyDiv.innerText = "No savings history found.";
-    return;
-  }
-
-  history.forEach((entry, index) => {
-    const div = document.createElement("div");
-    div.style.marginBottom = "10px"; // Add spacing between entries
-    div.innerHTML = `
-      <strong>Log #${index + 1}:</strong><br>
-      Month: ${entry.month} | 
-      Date: ${new Date(entry.createdAt).toLocaleDateString("id-ID")} | 
-      Income: Rp ${entry.monthlyIncome.toLocaleString("id-ID")} | 
-      Percentage: ${entry.savingsPercentage}% | 
-      Savings Goal: Rp ${entry.targetAmount.toLocaleString("id-ID")} | 
-      Contributions: Rp ${entry.recommendedSavings.toLocaleString("id-ID")}
-    `;
-    historyDiv.appendChild(div);
-  });
-}
-
-// Add contribution to current savings
-function addContribution() {
-  const selectedMonth = document.getElementById("month").value;
-  const rawContribution = document.getElementById("contribution").value.replace(/\./g, ''); // Remove dots before converting to number
-  const contribution = parseFloat(rawContribution);
-
-  if (isNaN(contribution) || contribution <= 0) {
-    alert("Please enter a valid contribution amount.");
-    return;
-  }
-
-  // Retrieve existing savings data from localStorage
-  let savingsHistory = JSON.parse(localStorage.getItem("savingsData")) || [];
-  const entry = savingsHistory.find(item => item.month === selectedMonth);
-
-  if (entry) {
-    // Add the contribution to the existing recommendedSavings
-    entry.recommendedSavings += contribution;
-
-    // Save updated data back to localStorage
-    localStorage.setItem("savingsData", JSON.stringify(savingsHistory));
-    alert("Contribution added!");
-    showHistory(); // Refresh history display after adding contribution
-  } else {
-    alert("No savings plan found for the selected month.");
-  }
-
-  // Clear input field
-  document.getElementById("contribution").value = "";
-}
-
-// Clear all savings history
-function clearHistory() {
-  if (confirm("Are you sure you want to clear all savings history?")) {
-    localStorage.removeItem("savingsData"); // Hapus data dari localStorage
-    showHistory(); // Refresh tampilan history
-    alert("Savings history cleared!");
-  }
-}
-
-// Load history on page load
-document.addEventListener("DOMContentLoaded", () => {
-  showHistory(); // Display history when page loads
-});

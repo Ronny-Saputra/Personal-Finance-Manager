@@ -1,193 +1,132 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Function to populate the Saved Savings Plans table
-  function populateSavingsTable() {
-    const savingsList = document.getElementById("savings-list");
-    if (!savingsList) return;
+// js/dashboard.js
+import { auth, db, onAuthStateChanged, collection, getDocs, query, orderBy } from '../src/firebaseAuth.js';
 
-    // Clear existing rows in the table
-    savingsList.innerHTML = `
-      <tr>
-        <th>Month</th>
-        <th>Target</th>
-        <th>Income</th>
-        <th>Saved</th>
-        <th>Percent</th>
-        <th>Date</th>
-      </tr>
-    `;
+let incomeChart, expenseChart;
 
-    // Retrieve savings data from localStorage
-    const savingsData = JSON.parse(localStorage.getItem("savingsData")) || [];
+onAuthStateChanged(auth, async user => {
+  if (!user) return window.location.href = "login.html";
+  document.querySelector('.welcome-message').textContent =
+    `Welcome, ${user.displayName || user.email}`;
 
-    // Populate the table with savings data
-    savingsData.forEach(entry => {
-      // Calculate progress percentage
-      const progressPercentage = entry.targetAmount
-        ? ((entry.recommendedSavings / entry.targetAmount) * 100).toFixed(1)
-        : 0;
-
-      // Create a new row for the table
-      const newRow = document.createElement("tr");
-      newRow.innerHTML = `
-        <td>${entry.month}</td>
-        <td>Rp. ${entry.targetAmount ? entry.targetAmount.toLocaleString() : "-"}</td>
-        <td>Rp. ${entry.monthlyIncome.toLocaleString()}</td>
-        <td>Rp. ${entry.recommendedSavings.toLocaleString()}</td>
-        <td>${entry.savingsPercentage}%</td>
-        <td>${new Date(entry.createdAt).toLocaleDateString()}</td>
-      `;
-
-      // Append the row to the table
-      savingsList.appendChild(newRow);
-
-      // Create a container for the progress bar
-      const progressBarContainer = document.createElement("tr");
-      progressBarContainer.innerHTML = `
-        <td colspan="6">
-          <div class="progress-bar-container">
-            <strong>Progress:</strong>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${progressPercentage}%;"></div>
-            </div>
-            <p>Rp. ${entry.recommendedSavings.toLocaleString()} / Rp. ${entry.targetAmount ? entry.targetAmount.toLocaleString() : "-"}</p>
-          </div>
-        </td>
-      `;
-
-      // Append the progress bar container to the table
-      savingsList.appendChild(progressBarContainer);
-    });
-  }
-
-  // Initial population of the savings table
-  populateSavingsTable();
-
-  // Listen for changes in localStorage (real-time updates)
-  window.addEventListener("storage", () => {
-    // Re-populate the savings table when localStorage changes
-    populateSavingsTable();
+  // Fetch transactions
+  const txSnap = await getDocs(query(
+    collection(db, "Users Transactions", user.uid, "transactions"),
+    orderBy("createdAt","asc")
+  ));
+  const transactions = txSnap.docs.map(d => {
+    const t = d.data();
+    return { ...t, date: t.createdAt.toDate() };
   });
 
-  // ✅ Income Summary Table
-  const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-  const incomeSummary = {};
-  const expenseCategories = {};
-  transactions.forEach(t => {
-    const month = new Date(t.date).toLocaleString("default", { month: "long" });
-    if (t.type === "income") {
-      incomeSummary[month] = (incomeSummary[month] || 0) + t.amount;
-    } else if (t.type === "expense") {
-      expenseCategories[t.category] = (expenseCategories[t.category] || 0) + t.amount;
-    }
+  // Fetch savings
+  const svSnap = await getDocs(query(
+    collection(db, "Users Saving Target", user.uid, "savingsTargets"),
+    orderBy("createdAt","asc")
+  ));
+  const savings = svSnap.docs.map(d => {
+    const s = d.data();
+    return {
+      month: s.month,
+      target: s.targetAmount,
+      income: s.income,
+      saved: (s.contributions||[]).reduce((a,c)=>a+c.amount, 0),
+      percent: s.percentage,
+      date: s.createdAt.toDate()
+    };
   });
 
-  const incomeTable = document.getElementById("income-summary");
-  if (incomeTable) {
-    let total = 0;
-    incomeTable.innerHTML = "<tr><th>Month</th><th>Amount</th></tr>";
-    Object.keys(incomeSummary).forEach(month => {
-      const amt = incomeSummary[month];
-      total += amt;
-      incomeTable.innerHTML += `<tr><td>${month}</td><td>Rp. ${amt.toLocaleString()}</td></tr>`;
-    });
-    incomeTable.innerHTML += `
-      <tr class="total-row">
-        <td><strong>Total</strong></td>
-        <td><strong>Rp. ${total.toLocaleString()}</strong></td>
-      </tr>
-    `;
-  }
+  // Get canvas contexts
+  const incCanvas = document.getElementById("incomeChart");
+  const expCanvas = document.getElementById("expenseChart");
+  const incomeCtx  = incCanvas && incCanvas.getContext("2d");
+  const expenseCtx = expCanvas && expCanvas.getContext("2d");
 
-  // ✅ Expense Percentage Table
-  const expenseTable = document.getElementById("expense-percentage");
-  if (expenseTable) {
-    let totalExpense = Object.values(expenseCategories).reduce((a, b) => a + b, 0);
-    expenseTable.innerHTML = "<tr><th>Category</th><th>Percentage</th></tr>";
-    Object.entries(expenseCategories).forEach(([cat, amt]) => {
-      let perc = ((amt / totalExpense) * 100).toFixed(1);
-      expenseTable.innerHTML += `<tr><td>${cat}</td><td>${perc}%</td></tr>`;
-    });
-    expenseTable.innerHTML += `
-      <tr class="total-row">
-        <td><strong>Total</strong></td>
-        <td><strong>100%</strong></td>
-      </tr>
-    `;
-  }
-
-  // ✅ Income Pie Chart
-  const incomeCtx = document.getElementById("incomeChart");
-  if (incomeCtx && Object.keys(incomeSummary).length > 0) {
-    new Chart(incomeCtx, {
-      type: 'pie',
-      data: {
-        labels: Object.keys(incomeSummary),
-        datasets: [{
-          label: 'Monthly Income',
-          data: Object.values(incomeSummary),
-          backgroundColor: [
-            '#4caf50', '#2196f3', '#ff9800', '#e91e63', '#9c27b0', '#00bcd4'
-          ],
-          borderColor: '#fff',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          },
-          title: {
-            display: true,
-            text: 'Income by Month'
-          }
-        }
-      }
-    });
-  }
-
-  // ✅ Expense Pie Chart
-  const expCtx = document.getElementById("expenseChart");
-  if (expCtx && Object.keys(expenseCategories).length > 0) {
-    const totalExpenseAmount = Object.values(expenseCategories).reduce((a, b) => a + b, 0);
-    const expenseLabels = Object.keys(expenseCategories);
-    const expenseValues = Object.values(expenseCategories);
-    new Chart(expCtx, {
-      type: 'pie',
-      data: {
-        labels: expenseLabels,
-        datasets: [{
-          label: 'Expense Distribution',
-          data: expenseValues,
-          backgroundColor: [
-            '#ff5722', '#ffc107', '#8bc34a', '#00bcd4', '#9c27b0', '#ff9800'
-          ],
-          borderColor: '#fff',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          },
-          title: {
-            display: true,
-            text: 'Expense by Category'
-          },
-          tooltip: {
-            callbacks: {
-              label: function (context) {
-                const amount = context.raw;
-                const percentage = ((amount / totalExpenseAmount) * 100).toFixed(1);
-                return `${context.label}: Rp. ${amount.toLocaleString()} (${percentage}%)`;
-              }
-            }
-          }
-        }
-      }
-    });
-  }
+  renderSavingsPlans(savings);
+  renderSummary(transactions);
+  renderCharts(transactions, incomeCtx, expenseCtx);
 });
+
+export function renderSavingsPlans(savings) {
+  const savingsList = document.getElementById("savings-list");
+  savingsList.innerHTML = `
+    <tr><th>Month</th><th>Target</th><th>Income</th><th>Saved</th><th>%</th><th>Date</th></tr>
+  `;
+  savings.forEach(e => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${e.month}</td>
+      <td>Rp ${e.target.toLocaleString('id-ID')}</td>
+      <td>Rp ${e.income.toLocaleString('id-ID')}</td>
+      <td>Rp ${e.saved.toLocaleString('id-ID')}</td>
+      <td>${e.percent}%</td>
+      <td>${e.date.toLocaleDateString("id-ID")}</td>
+    `;
+    savingsList.append(tr);
+
+    const progress = e.target ? ((e.saved / e.target) * 100).toFixed(1) : 0;
+    const pr = document.createElement("tr");
+    pr.innerHTML = `
+      <td colspan="6">
+        <div class="progress-bar-container">
+          <strong>Progress:</strong>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${progress}%;"></div>
+          </div>
+          <p>Rp ${e.saved.toLocaleString('id-ID')} / Rp ${e.target.toLocaleString('id-ID')}</p>
+        </div>
+      </td>
+    `;
+    savingsList.append(pr);
+  });
+}
+
+export function renderSummary(transactions) {
+  const incomeTable  = document.getElementById("income-summary");
+  const expenseTable = document.getElementById("expense-percentage");
+
+  const incByMonth = {}, expByCat = {};
+  transactions.forEach(t => {
+    const m = t.date.toLocaleString("default",{month:"long"});
+    if (t.type==="income") incByMonth[m] = (incByMonth[m]||0) + t.amount;
+    else expByCat[t.category] = (expByCat[t.category]||0) + t.amount;
+  });
+
+  let totInc = 0;
+  incomeTable.innerHTML = "<tr><th>Month</th><th>Amount</th></tr>";
+  Object.entries(incByMonth).forEach(([m,a]) => {
+    totInc += a;
+    incomeTable.innerHTML += `<tr><td>${m}</td><td>Rp ${a.toLocaleString('id-ID')}</td></tr>`;
+  });
+  incomeTable.innerHTML += `<tr class="total-row"><td><strong>Total</strong></td><td><strong>Rp ${totInc.toLocaleString('id-ID')}</strong></td></tr>`;
+
+  const totExp = Object.values(expByCat).reduce((a,b)=>a+b,0);
+  expenseTable.innerHTML = "<tr><th>Category</th><th>Percentage</th></tr>";
+  Object.entries(expByCat).forEach(([c,a]) => {
+    const p = totExp ? ((a/totExp)*100).toFixed(1) : 0;
+    expenseTable.innerHTML += `<tr><td>${c}</td><td>${p}%</td></tr>`;
+  });
+  expenseTable.innerHTML += `<tr class="total-row"><td><strong>Total</strong></td><td><strong>100%</strong></td></tr>`;
+}
+
+export function renderCharts(transactions, incomeCtx, expenseCtx) {
+  if (!incomeCtx || !expenseCtx) return;
+
+  const incByMonth = {}, expByCat = {};
+  transactions.forEach(t => {
+    const m = t.date.toLocaleString("default",{month:"long"});
+    if (t.type==="income") incByMonth[m] = (incByMonth[m]||0) + t.amount;
+    else expByCat[t.category] = (expByCat[t.category]||0) + t.amount;
+  });
+
+  if (incomeChart) incomeChart.destroy();
+  incomeChart = new Chart(incomeCtx, {
+    type: 'pie',
+    data: { labels: Object.keys(incByMonth), datasets: [{ data: Object.values(incByMonth) }] }
+  });
+
+  if (expenseChart) expenseChart.destroy();
+  expenseChart = new Chart(expenseCtx, {
+    type: 'pie',
+    data: { labels: Object.keys(expByCat), datasets: [{ data: Object.values(expByCat) }] }
+  });
+}
